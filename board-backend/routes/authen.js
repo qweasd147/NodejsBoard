@@ -9,7 +9,7 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const NaverStrategy = require('passport-naver').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-const successRedirect = "/";
+const successRedirect = "localhost:3000/";
 
 /*로그인 성공시 사용자 정보를 Session에 저장한다*/
 passport.serializeUser(function (user, done) {
@@ -147,9 +147,14 @@ router.get('/logout', function (req, resp) {
   resp.clearCookie('loginProvider');
 
   //const token = req.session.passport.accessToken;
+  /*
+  console.log(req.connection.remoteAddress);
+  console.log(req.connection.remotePort);
+  console.log(req.connection.localAddress);
+  console.log(req.connection.localPort);
 
   console.log(req.get('host'));
-
+  */
   return resp.json({
       success: true
   });
