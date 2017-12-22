@@ -289,13 +289,21 @@ function getFileObjArr(files){
         return rtnArr;
         
     for(let i=0;i<files.length;i++){
-        const ext = files[i].originalname.split('.')[1];
+
+        let _ext = "";
+
+        const oFileName = files[i].originalname;
+        const _idx = oFileName.lastIndexOf('.');
+        
+        if(_idx>0){
+            _ext = oFileName.substr(_idx+1, oFileName.length)
+        }
 
         let fileObj = {
             uploadedName : files[i].filename
             , uploadedDir : files[i].destination
             , originName : files[i].originalname
-            , ext : ext || ''
+            , ext : _ext || ''
             , mimeType : files[i].mimetype
             , size : files[i].size
             , state : 1

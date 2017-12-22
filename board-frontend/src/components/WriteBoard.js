@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import update from 'react-addons-update';
 
 import { DropZone } from '../components';
 import { $, Materialize } from '../utils/thirdPartyLib';
@@ -132,8 +133,15 @@ class WriteBoard extends React.Component {
     }
 
     handleOnDrop(dropFiles) {
+        console.log(33);
+        //기존 dropfiles에 새로 추가된걸 push한다
         this.setState({
-            dropFiles
+            dropFiles: update(
+                this.state.dropFiles,
+                {
+                    $push: dropFiles
+                }
+            )
         });
     }
 
@@ -153,11 +161,25 @@ class WriteBoard extends React.Component {
             , 'height' : '200px'
         }
 
+        /**
+         * 파일 정보를 컴포넌트 형태로 만든다.
+         * @param {*} files 
+         * @param {*} isUploaded 서버에서 받아온 파일인지 여부. false => 서버에서 가저온 정보/true => 프론트에서 가져온 파일 정보
+         */
         const mapToFilesComponents = (files, isUploaded) => {
+            console.log('compo');
+            console.log('compo');
+            console.log('compo');
+            console.log('compo');
+            let fileNameKey;
+
+            if(isUploaded)  fileNameKey = "originName";
+            else            fileNameKey = "name";
+
             return files.map((file, i) => {
                 return (
                     <li className="collection-item" key={i.toString()}>
-                        <div>{file.name} ({(file.size / Math.pow(1024,2)).toFixed(2)} MB)
+                        <div>{file[fileNameKey]} ({(file.size / Math.pow(1024,2)).toFixed(2)} MB)
                             <a href="#none" className="secondary-content" onClick={(e)=>this.handleFileDelete(e, file, isUploaded)}><i className="material-icons">delete</i></a>
                         </div>
                     </li>
@@ -210,12 +232,10 @@ class WriteBoard extends React.Component {
                                     className={'card-panel'}
                                 />
                                 <div className="col s10 offset-s1">
-                                    {
-                                        this.state.dropFiles && this.state.dropFiles.length>0?
-                                        <ul className="collection with-header">
-                                            {mapToFilesComponents(this.state.dropFiles ,false)}
-                                        </ul>:undefined
-                                    }
+                                    <ul className="collection with-header">
+                                        {mapToFilesComponents(this.state.dropFiles ,false)}
+                                        {mapToFilesComponents(this.state.uploadedFiles ,true)}
+                                    </ul>
                                 </div>
                             </div>
                         </div>
