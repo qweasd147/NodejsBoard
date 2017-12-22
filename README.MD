@@ -29,3 +29,4 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
 redirect하는 부분이 필요함. 서버 -> webpack dev server로 redirect 시 redirect 주소,port를 서버 쪽에서 알고 있어야됨....
 근데 이게 개발 시 문제고 배포 시에는 서버단 하나만 올리고 프론트는 그냥 build해서 올리면 되는데 webpack dev server 주소를
 서버단에서 신경 써야 하는지 고민중... 현재 그냥 하드 코딩함
+##17.12.22 ==> 안하는게 더 귀찮고 헤깔려서 그냥 간단하게 만듦

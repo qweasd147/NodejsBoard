@@ -63,5 +63,6 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port, () => {
+    console.log("env value : "+process.env.NODE_ENV);
     console.log('Express is listening on port', port);
 });

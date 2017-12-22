@@ -254,6 +254,8 @@ router.get('/download/:boardId/:fileId',(req,resp)=>{
             });
     }
 
+
+    //TODO : 파일이 삭제 되었는지 안되어 있는지 검사해야함
     Board.findOne({_id : mongoose.Types.ObjectId(boardId)
         , 'file._id': mongoose.Types.ObjectId(fileId)
     },"file"

@@ -12,13 +12,14 @@ class WriteBoard extends React.Component {
         super(props);
 
         this.state = {
-            dropFiles: []
-            , uploadedFiles : []
+            dropFiles: []           //등록 요청할 파일 목록
+            , uploadedFiles : []    //현재 서버에 저장되어 있는 파일목록
             , imagePreviewUrl: ''
             , subject : ''
             , contents : ''
             , count : ''
             , writer : ''
+            , deleteFiles : []      //삭제 요청할 파일 목록
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -83,10 +84,11 @@ class WriteBoard extends React.Component {
 
     handleWrite(){
         let formData = new FormData();
-
+        console.log('write');
         formData.append('subject',this.state.subject);
         formData.append('contents',this.state.contents);
-        formData.append('uploadFile',this.state.file);
+        formData.append('uploadFile',this.state.dropFiles);
+        formData.append('deleteFile[]',this.state.deleteFiles);
 
         const chipData = $('.chips').material_chip('data');
 
@@ -105,6 +107,7 @@ class WriteBoard extends React.Component {
 
         const boardId = this.props.boardId;
 
+        
         this.props.handleWrite(formData, boardId).then(()=>{
             //state 초기화
             this.setState({
@@ -113,6 +116,7 @@ class WriteBoard extends React.Component {
             });
 
         }).then(()=>{this.props.afterWrite();});
+        
 
         return false;
     }
@@ -120,6 +124,7 @@ class WriteBoard extends React.Component {
     handleImageChange(e){
         e.preventDefault();
         
+        /*
         let reader = new FileReader();
         let file = e.target.files[0];
         
@@ -130,10 +135,10 @@ class WriteBoard extends React.Component {
             });
         }
         reader.readAsDataURL(file)
+        */
     }
 
     handleOnDrop(dropFiles) {
-        console.log(33);
         //기존 dropfiles에 새로 추가된걸 push한다
         this.setState({
             dropFiles: update(
@@ -145,8 +150,61 @@ class WriteBoard extends React.Component {
         });
     }
 
-    handleFileDelete(event, file, isUploaded){
-        alert('파일 삭제!(나중에 할꺼)');
+    /**
+     * 기존 업로드된 파일
+     *      ==> deleteFile에 file._id값을 집어넣고 state에서도 해당 _id값을 제거한다
+     * 프론트에만 있는 파일
+     *      ==> 넘겨받은 index값을 dropfiles에서 제거한다.
+     * 
+     * @param {*} event 
+     * @param {*} file 
+     * @param {*} isUploaded 
+     */
+    handleFileDelete(event, filekey, isUploaded){
+
+        event.preventDefault();
+
+        if(isUploaded){
+            //서버단으로 보낼 정보
+            this.setState({
+                deleteFiles: update(
+                    this.state.deleteFiles,
+                    {
+                        $push: [filekey]
+                    }
+                )
+            });
+
+            //화면에서 제거
+
+            const _uploadedFiles = this.state.uploadedFiles;
+
+            const fileIdx = _uploadedFiles.findIndex((item)=>
+                filekey === item._id
+            );
+
+            this.setState({
+                uploadedFiles: update(
+                    this.state.uploadedFiles,
+                    {
+                        $splice: [[fileIdx, 1]]
+                    }
+                )
+            });
+
+        }else{
+            //화면에서 제거
+            if(filekey>=0){
+                this.setState({
+                    dropFiles: update(
+                        this.state.dropFiles,
+                        {
+                            $splice: [[filekey, 1]]
+                        }
+                    )
+                });
+            }
+        }
     }
 
     render() {
@@ -167,24 +225,34 @@ class WriteBoard extends React.Component {
          * @param {*} isUploaded 서버에서 받아온 파일인지 여부. false => 서버에서 가저온 정보/true => 프론트에서 가져온 파일 정보
          */
         const mapToFilesComponents = (files, isUploaded) => {
-            console.log('compo');
-            console.log('compo');
-            console.log('compo');
-            console.log('compo');
+
             let fileNameKey;
 
             if(isUploaded)  fileNameKey = "originName";
             else            fileNameKey = "name";
 
-            return files.map((file, i) => {
-                return (
-                    <li className="collection-item" key={i.toString()}>
-                        <div>{file[fileNameKey]} ({(file.size / Math.pow(1024,2)).toFixed(2)} MB)
-                            <a href="#none" className="secondary-content" onClick={(e)=>this.handleFileDelete(e, file, isUploaded)}><i className="material-icons">delete</i></a>
-                        </div>
-                    </li>
-                );
-            });
+            if(Array.isArray(files)){
+                return files.map((file, i) => {
+                    let fileKey;    //물리적 파일 리스트 중 특정 파일을 구분할 수 있는 파일 key
+    
+                    //이미 업로드 된 파일은 _id값으로,
+                    //프론트에서만 올라가 있는 파일은 마지막 index값으로 key값을 설정한다.
+                    if(isUploaded)  fileKey = file['_id'];
+                    else            fileKey = this.state.dropFiles.length -1;
+    
+                    return (
+                        <li className="collection-item" key={i.toString()}>
+                            <div>{file[fileNameKey]} ({(file.size / Math.pow(1024,2)).toFixed(2)} MB)
+                                <a href="#none" className="secondary-content" onClick={(e)=>this.handleFileDelete(e, fileKey, isUploaded)}>
+                                <i className="material-icons">delete</i></a>
+                            </div>
+                        </li>
+                    );
+                });
+            }else{
+                return undefined;
+            }
+            
         };
 
         return (
@@ -233,8 +301,8 @@ class WriteBoard extends React.Component {
                                 />
                                 <div className="col s10 offset-s1">
                                     <ul className="collection with-header">
-                                        {mapToFilesComponents(this.state.dropFiles ,false)}
                                         {mapToFilesComponents(this.state.uploadedFiles ,true)}
+                                        {mapToFilesComponents(this.state.dropFiles ,false)}
                                     </ul>
                                 </div>
                             </div>

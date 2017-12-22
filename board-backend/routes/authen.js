@@ -1,5 +1,6 @@
 const express = require('express');
 const loginInfo = require('../config/secret');
+const env = require('../config/env');
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const NaverStrategy = require('passport-naver').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
-const successRedirect = "localhost:3000/";
+const successRedirect = env.successRedirect;
 
 /*로그인 성공시 사용자 정보를 Session에 저장한다*/
 passport.serializeUser(function (user, done) {
@@ -34,8 +35,6 @@ function loginByThirdparty(data,done){
   //사용자 정보를 개인(어플) DB로 관리 할지 안할지
   //선택 하여 구현
 
-
-  console.log('login!');
   done(null,data);
 }
 
@@ -111,19 +110,17 @@ router.get('/login/kakao', passport.authenticate('kakao'));
 
 router.get('/login/kakao/callback',
   passport.authenticate('kakao', {
-    successRedirect: "/",
+    successRedirect: successRedirect,
     failureRedirect: '/login'
   })
 );
 
 //naver
-router.get('/login/naver',
-  passport.authenticate('naver')
-);
+router.get('/login/naver', passport.authenticate('naver'));
 
 router.get('/login/naver/callback',
   passport.authenticate('naver', {
-    successRedirect: "/",
+    successRedirect: successRedirect,
     failureRedirect: '/login'
   })
 );
@@ -134,7 +131,7 @@ router.get('/login/google', passport.authenticate('google', { scope: ['email pro
 
 router.get('/login/google/callback',
       passport.authenticate('google', {
-        successRedirect: "/",
+        successRedirect: successRedirect,
         failureRedirect: '/login'
       })
 );
@@ -147,14 +144,14 @@ router.get('/logout', function (req, resp) {
   resp.clearCookie('loginProvider');
 
   //const token = req.session.passport.accessToken;
-  /*
+  
   console.log(req.connection.remoteAddress);
   console.log(req.connection.remotePort);
   console.log(req.connection.localAddress);
   console.log(req.connection.localPort);
 
   console.log(req.get('host'));
-  */
+  
   return resp.json({
       success: true
   });
