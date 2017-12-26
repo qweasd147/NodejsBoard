@@ -2,7 +2,7 @@ const envData = {
     'dev' : {
         'successRedirect' : "http://localhost:3000/"
     }
-    , 'production' : {
+    , 'prod' : {
         'successRedirect' : "/"
     }
 }

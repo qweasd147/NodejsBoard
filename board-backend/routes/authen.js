@@ -78,7 +78,7 @@ passport.use(new NaverStrategy({
       'accessToken' : accessToken,
       'provider' : 'naver'
     }
-
+    
     loginByThirdparty(sessionData, done);
   }
 ));
@@ -138,20 +138,19 @@ router.get('/login/google/callback',
 
 router.get('/logout', function (req, resp) {
 
-  console.log(req.cookies);
-
   req.logout();
   resp.clearCookie('loginProvider');
 
   //const token = req.session.passport.accessToken;
   
+  /*
   console.log(req.connection.remoteAddress);
   console.log(req.connection.remotePort);
   console.log(req.connection.localAddress);
   console.log(req.connection.localPort);
 
   console.log(req.get('host'));
-  
+  */
   return resp.json({
       success: true
   });
@@ -161,8 +160,12 @@ router.get('/logout', function (req, resp) {
 router.get('/userInfo', function (req, resp) {
   console.log(req.session);
   
-  console.log(req.user);
-  console.log(req.user.userInfo);
+  if(req.isAuthenticated()){
+    console.log('로긴 되어있음');
+  }else{
+    console.log('안되어 있음');
+  }
+
   return resp.json({
       success: true
   });
