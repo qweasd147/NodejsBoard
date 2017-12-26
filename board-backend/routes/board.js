@@ -105,7 +105,7 @@ router.get('/select/:id', (req, resp) => {
         });
     });
     */
-    
+    console.log('id : '+req.params.id);
     Board.findOneAndUpdate(
         { "_id" : req.params.id, "state" : 1}
         ,{ $inc :  {count : 1}}
@@ -221,10 +221,23 @@ router.put('/:id', upload.array('uploadFile'), (req,resp)=>{
         // MODIFY AND SAVE IN DATABASE
         board.subject = req.body.subject;
         board.contents = req.body.contents;
-        board.writer = req.session.passport.user.nickname;
+        board.writer = req.user.nickName,
         //board.date.edited = Date.now;
         board.date.edited = new Date();
         board.tag = req.body.tag;
+        
+        //삭제 요청한 파일 id값을 기준으로 삭제 처리를 진행(flag 번경) 한다.
+        if(Array.isArray(req.body.deleteFile) && Array.isArray(board.file)){
+            for(let i=0;i<req.body.deleteFile.length;i++){
+                for(let j=0;j<board.file.length;j++){
+                    if(board.file[j].equals(req.body.deleteFile[i])){
+                        board.file[j].state=0;
+
+                        continue;
+                    }
+                }
+            }
+        }
         
 
         board.save((err, board) => {

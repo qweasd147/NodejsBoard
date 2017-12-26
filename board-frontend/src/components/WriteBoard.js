@@ -87,14 +87,24 @@ class WriteBoard extends React.Component {
         console.log('write');
         formData.append('subject',this.state.subject);
         formData.append('contents',this.state.contents);
-        formData.append('uploadFile',this.state.dropFiles);
-        formData.append('deleteFile[]',this.state.deleteFiles);
+        //formData.append('uploadFile',this.state.dropFiles);
+        //formData.append('deleteFile',this.state.deleteFiles);
 
-        const chipData = $('.chips').material_chip('data');
+        const _chipData = $('.chips').material_chip('data');
+        const _dropFiles = this.state.dropFiles;
+        const _deleteFiles = this.state.deleteFiles;
 
-        $.each(chipData,function(idx,item){
+        $.each(_chipData,function(idx,item){
             formData.append('tag[]',item.tag);
-        })
+        });
+
+        $.each(_dropFiles,function(idx,item){
+            formData.append('uploadFile[]',_dropFiles[idx]);
+        });
+
+        $.each(_deleteFiles,function(idx,item){
+            formData.append('deleteFile[]',_deleteFiles[idx]);
+        });
         
         /*
         let formData = {

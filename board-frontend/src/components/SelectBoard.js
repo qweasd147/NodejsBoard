@@ -26,8 +26,12 @@ class SelectBoard extends React.Component {
             , fileID
         });
         
+        console.log('click');
+
+        const serverHost = process.env.REACT_APP_SERVER_HOST || "";
+
         this.setState({
-            downloadURL : "/api/board/download/"+boardID+"/"+fileID
+            downloadURL : serverHost+"/api/board/download/"+boardID+"/"+fileID
         });
         
     }
@@ -125,11 +129,7 @@ class SelectBoard extends React.Component {
                         
                     </ul>
                 </div>
-                
-                
                     <iframe id="hiddenFrame" style={hdnStyle} src={this.state.downloadURL}></iframe>
-                
-                
             </div>
             
         );
