@@ -109,7 +109,12 @@ router.get('/select/:id', (req, resp) => {
     Board.findOneAndUpdate(
         { "_id" : req.params.id, "state" : 1}
         ,{ $inc :  {count : 1}}
-        ,{ "file" : { $elemMatch : {"state" : 1}}}
+        ,{ "projection": {
+            "file": {
+                $elemMatch: {"state" : 1 } 
+                }
+            }
+        }
         )
         .select(
             'subject contents writer date tag count '
