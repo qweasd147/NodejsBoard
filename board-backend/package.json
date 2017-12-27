@@ -4,9 +4,9 @@
   "description": "simple board RestAPI",
   "main": "",
   "scripts": {
-    "prod": "cross-env NODE_ENV=prod node server.js"
-    , "dev": "cross-env NODE_ENV=dev node server.js"
-    , "start": "node server.js"
+    "prod": "cross-env NODE_ENV=prod node server.js",
+    "dev": "cross-env NODE_ENV=dev node server.js",
+    "start": "node server.js"
   },
   "author": "joo",
   "license": "ISC",
