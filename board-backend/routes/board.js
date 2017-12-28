@@ -142,7 +142,7 @@ router.get('/select/:id', (req, resp) => {
  * errCode 
  * 1 -> 벨리데이션 오류
  */
-router.post('/', upload.array('uploadFile'), (req,resp)=>{
+router.post('/', upload.array('uploadFile[]'), (req,resp)=>{
     
     //벨리데이션
     if(!(req.body.subject && req.body.contents)){
@@ -187,7 +187,7 @@ router.post('/', upload.array('uploadFile'), (req,resp)=>{
  * 3 -> 해당 글번호 존재안함
  * 4 -> 수정 권한 없음
  */
-router.put('/:id', upload.array('uploadFile'), (req,resp)=>{
+router.put('/:id', upload.array('uploadFile[]'), (req,resp)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",

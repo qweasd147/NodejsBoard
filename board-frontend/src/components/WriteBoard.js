@@ -24,7 +24,6 @@ class WriteBoard extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleWrite = this.handleWrite.bind(this);
-        this.handleImageChange = this.handleImageChange.bind(this);
         this.handleOnDrop = this.handleOnDrop.bind(this);
         this.handleFileDelete = this.handleFileDelete.bind(this);
     }
@@ -129,23 +128,6 @@ class WriteBoard extends React.Component {
         return false;
     }
 
-    handleImageChange(e){
-        e.preventDefault();
-        
-        /*
-        let reader = new FileReader();
-        let file = e.target.files[0];
-        
-        reader.onloadend = () => {
-            this.setState({
-                file: file,
-                imagePreviewUrl: reader.result
-            });
-        }
-        reader.readAsDataURL(file)
-        */
-    }
-
     handleOnDrop(dropFiles) {
         //기존 dropfiles에 새로 추가된걸 push한다
         this.setState({
@@ -216,11 +198,6 @@ class WriteBoard extends React.Component {
     }
 
     render() {
-        let {imagePreviewUrl} = this.state;
-        let $imagePreview = null;
-        if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} />);
-        }
 
         const dropZoneStyle = {
             'width' : '100%'
@@ -282,22 +259,6 @@ class WriteBoard extends React.Component {
                         <div className="row">
                             <div className="input-field col s12">
                                 <div className="chips"></div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col s12">
-                                <div className="file-field input-field">
-                                    <div className="btn">
-                                        <span>File</span>
-                                        <input type="file" onChange={this.handleImageChange} />
-                                        {/* 이미지 미리보기
-                                            $imagePreview
-                                        */}
-                                    </div>
-                                    <div className="file-path-wrapper">
-                                        <input className="file-path validate" type="text" placeholder="Upload one or more files" />
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div className="row">
