@@ -84,7 +84,6 @@ class WriteBoard extends React.Component {
 
     handleWrite(){
         let formData = new FormData();
-        console.log('write');
         formData.append('subject',this.state.subject);
         formData.append('contents',this.state.contents);
         //formData.append('uploadFile',this.state.dropFiles);
@@ -117,7 +116,6 @@ class WriteBoard extends React.Component {
 
         const boardId = this.props.boardId;
 
-        
         this.props.handleWrite(formData, boardId).then(()=>{
             //state 초기화
             this.setState({

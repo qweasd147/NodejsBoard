@@ -19,7 +19,7 @@ import { dataLoading, dataLoadingComplete } from './Common';
 
 //TODO : action에서 다른 작업(toast) 하는게 맞는건가 고민중
 import { Materialize } from '../utils/thirdPartyLib';
-import { requestGET, requestPOST, requestPUT } from '../utils/ajaxUtils';
+import { requestGET, requestPOST, requestPUT, requestDELETE } from '../utils/ajaxUtils';
 
 const BOARD_API = "/api/board/";
 
@@ -184,6 +184,46 @@ export function updateBoardFail(msg) {
     Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: UPDATE_BOARD_FAIL
+        , msg
+    };
+}
+
+//글 삭제
+export function boardDeleteRequest(_id){
+    return (dispatch)=>{
+
+        dispatch(dataLoading());
+        dispatch(deleteBoardWait());
+
+        return requestDELETE(BOARD_API+_id)
+        .then((response) => {
+            dispatch(deleteBoardSuccess(response.data));
+            dispatch(dataLoadingComplete());
+        }).catch((error) => {
+            dispatch(deleteBoardFail(error.message));
+            dispatch(dataLoadingComplete());
+        });
+    }
+}
+
+
+export function deleteBoardWait() {
+    return {
+        type: DELETE_BOARD_WAIT
+    };
+}
+
+export function deleteBoardSuccess(data) {
+    return {
+        type: DELETE_BOARD_SUCCESS
+        , data
+    };
+}
+
+export function deleteBoardFail(msg) {
+    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
+    return {
+        type: DELETE_BOARD_FAIL
         , msg
     };
 }

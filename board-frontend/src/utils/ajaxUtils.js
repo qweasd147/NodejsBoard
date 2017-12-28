@@ -29,6 +29,12 @@ export function requestPUT(apiURL){
     return requestAjax(apiURL, METHOD.put, params);
 }
 
+export function requestDELETE(apiURL){
+    const params = Array.prototype.slice.call(arguments,1)
+    
+    return requestAjax(apiURL, METHOD.delete, params);
+}
+
 //요청 한 function을 구해서 ajax 호출 시 맞는 매개변수값을 넘겨준다.
 //axios 에선 첫번째 매개변수를 url로 고정함.
 function requestAjax(apiURL, method, params){

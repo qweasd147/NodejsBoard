@@ -8,6 +8,8 @@ class SelectBoard extends React.Component {
 
         this.handleFileClick = this.handleFileClick.bind(this);
         this.handleUpdateView = this.handleUpdateView.bind(this);
+        this.handleListView = this.handleListView.bind(this);
+        this.handleDeleteBoard = this.handleDeleteBoard.bind(this);
 
         this.state={
             boardID : ''
@@ -26,8 +28,6 @@ class SelectBoard extends React.Component {
             , fileID
         });
         
-        console.log('click');
-
         const serverHost = process.env.REACT_APP_SERVER_HOST || "";
 
         this.setState({
@@ -42,6 +42,23 @@ class SelectBoard extends React.Component {
         this.props.updateView();
     }
     
+    handleListView(){
+        this.props.listView();
+    }
+
+    handleDeleteBoard(e){
+
+        const boardId = this.props.data._id;
+
+        if(boardId){
+            this.props.deleteBoard(boardId).then(()=>{
+                this.handleListView();
+            })
+        }
+        
+        return false;
+    }
+
     render() {
         const mapToComponentFile = data => {
             return data.map((file, i) => {
@@ -122,14 +139,13 @@ class SelectBoard extends React.Component {
                         {this.props.isLogin == true? 
                         <li><a onClick={this.handleUpdateView} className="btn-floating red"><i className="material-icons">mode_edit</i></a></li> : undefined
                         }
-                        <li><Link to="/" className="btn-floating yellow darken-1"><i className="material-icons">view_list</i></Link></li>
+                        <li><a onClick={this.handleListView} className="btn-floating yellow darken-1"><i className="material-icons">view_list</i></a></li>
                         {this.props.isLogin == true? 
-                        <li><Link to="/api/delete/:id" className="btn-floating green"><i className="material-icons">delete</i></Link></li> : undefined
+                        <li><a onClick={this.handleDeleteBoard} className="btn-floating green"><i className="material-icons">delete</i></a></li> : undefined
                         }
-                        
                     </ul>
                 </div>
-                    <iframe id="hiddenFrame" style={hdnStyle} src={this.state.downloadURL}></iframe>
+                    <iframe title="downloadFrame" id="hiddenFrame" style={hdnStyle} src={this.state.downloadURL}></iframe>
             </div>
             
         );

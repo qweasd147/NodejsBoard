@@ -55,8 +55,8 @@ router.get('/:page', (req, resp) => {
     const searchWord = req.params.searchWord || '';
     const perPage = 10; //하나의 페이지 당 출력 게시글
     
-    Board.find().count((err,count)=>{
-        Board.find().sort({"_id": -1})
+    Board.find({"state" : 1}).count((err,count)=>{
+        Board.find({"state" : 1}).sort({"_id": -1})
         .limit(perPage)
         .skip(perPage*(page-1))
         .select('subject contents writer date tag count')
@@ -105,7 +105,7 @@ router.get('/select/:id', (req, resp) => {
         });
     });
     */
-    console.log('id : '+req.params.id);
+    
     Board.findOneAndUpdate(
         { "_id" : req.params.id, "state" : 1}
         ,{ $inc :  {count : 1}}
@@ -209,7 +209,7 @@ router.put('/:id', upload.array('uploadFile'), (req,resp)=>{
             code: 1
         });
     }
-
+    
     Board.findById(req.params.id, (err, board) => {
         if(err){
             throw err
@@ -253,6 +253,32 @@ router.put('/:id', upload.array('uploadFile'), (req,resp)=>{
             });
         });
     });
+});
+
+/**
+ * Board 삭제
+ * 
+ * errCode
+ * 2 -> 잘못된 아이디
+ */
+router.delete('/:id', (req, resp) => {
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return resp.status(400).json({
+            error: "INVALID ID",
+            code: 2
+        });
+    }
+
+    Board.update(
+        { "_id" : req.params.id, "state" : 1}
+        , { $set :  {"state" : 0}}
+        ,(err, count, status)=>{
+            if(err) throw err;
+
+            return resp.json({
+                success: true
+            });
+        });
 });
 
 /**
