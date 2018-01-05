@@ -24,13 +24,19 @@ import { requestGET, requestPOST, requestPUT, requestDELETE } from '../utils/aja
 const BOARD_API = "/api/board/";
 
 //글 목록
-export function BoardListRequest(pageNum) {
+export function BoardListRequest(pageNum, keyword, searchWord) {
     return (dispatch) => {
 
         dispatch(dataLoading());
         dispatch(listBoardWait());
         
-        return requestGET(BOARD_API+pageNum+"/")
+        let requestURL = BOARD_API+pageNum;
+
+        if(keyword && searchWord){
+            requestURL = requestURL+"?keyword="+keyword+"&searchWord="+searchWord;
+        }
+
+        return requestGET(requestURL)
         .then((response) => {
             dispatch(listBoardSuccess(response.data));
             dispatch(dataLoadingComplete());

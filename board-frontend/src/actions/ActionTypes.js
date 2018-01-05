@@ -27,24 +27,7 @@ export const DELETE_BOARD_FAIL      = "DELETE_BOARD_"+FAIL_POSTFIX;
 //어플 구동 상태
 export const INITAL_APP             = "INIT";
 
-/*
-export const GET_BOARD_DATA = "GET_BOARD_DATA";
 
-//write
-export const BOARD_WRITE = "BOARD_POST";
-export const BOARD_WRITE_SUCCESS = "BOARD_POST_SUCCESS";
-export const BOARD_WRITE_FAIL = "BOARD_POST_FAIL";
-
-//select
-export const SELECT_BOARD_DATA = "SELECT_BOARD_DATA";
-export const SELECT_BOARD_WAIT = "SELECT_BOARD_WAIT";
-export const SELECT_BOARD_FAIL = "SELECT_BOARD_FAIL";
-
-//update
-export const UPDATE_BOARD_WAIT = "UPDATE_BOARD_WAIT";
-export const UPDATE_BOARD_SUCCESS = "UPDATE_BOARD_SUCCESS";
-export const UPDATE_BOARD_FAIL = "UPDATE_BOARD_FAIL";
-*/
 
 //login
 export const SET_IS_LOGIN = "SET_IS_LOGIN";

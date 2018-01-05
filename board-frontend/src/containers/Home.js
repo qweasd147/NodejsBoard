@@ -30,7 +30,9 @@ class Home extends React.Component{
             handlePage = {this.props.boardListRequest}
             page = {this.props.currentPage}
             handleSelectBoard = {this.handleSelect}
-            isLogin = {this.props.isLogin} />
+            isLogin = {this.props.isLogin}
+            handleListBoard = {this.props.boardListRequest}
+            />
         );
     };
 }
@@ -48,8 +50,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        boardListRequest: (pageNum) => {
-            return dispatch(BoardListRequest(pageNum));
+        boardListRequest: (pageNum, keyword, searchWord) => {
+            return dispatch(BoardListRequest(pageNum, keyword, searchWord));
         }
     };
 };

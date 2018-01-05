@@ -67,7 +67,7 @@ class ListBoard extends React.Component {
 
         return (
             <div className="container" id="main-contents">
-                <SearchBox />
+                <SearchBox handleListBoard = {this.props.handleListBoard} />
                 <div className="row">
                     <table className="highlight">
                         <thead>

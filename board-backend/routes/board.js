@@ -51,12 +51,22 @@ const upload = multer({ storage: storage });
  */
 router.get('/:page', (req, resp) => {
     const page = req.params.page || 1;
-    const keyword = req.params.keyword || '';
-    const searchWord = req.params.searchWord || '';
+
+    const {
+        keyword
+        , searchWord
+    } = req.query
+
     const perPage = 10; //하나의 페이지 당 출력 게시글
     
-    Board.find({"state" : 1}).count((err,count)=>{
-        Board.find({"state" : 1}).sort({"_id": -1})
+    let findParams = {"state" : 1};
+
+    if(keyword && searchWord && (keyword != "state")){
+        findParams[keyword] = searchWord;
+    }
+
+    Board.find(findParams).count((err,count)=>{
+        Board.find(findParams).sort({"_id": -1})
         .limit(perPage)
         .skip(perPage*(page-1))
         .select('subject contents writer date tag count')

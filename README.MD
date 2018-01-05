@@ -15,18 +15,44 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
 중간에 프로젝트 날리고 다시 repo 판거라 history는 부족함!(내가 만든거 맞음)
 
 # 사용법
-그냥 각 서버, 프론트에서 npm run install, npm run start 하면 되고, front는 배포를 원할 시 그냥 npm run build.
-어차피 이거 보는 사람은 기초적인 npm 사용법이랑 package.json에 script 정도는 볼 수 있을거라 생각됨...
-(사실 '딴 사람보다 나만 이해하면 되지' 라는 마인드 맞음.)
+
+    board-backend
+    "scripts": {
+        "prod": "cross-env NODE_ENV=prod node server.js",
+        "dev": "cross-env NODE_ENV=dev node server.js",
+        "start": "node server.js"
+    },
+    prod = product 환경
+    dev = development 환경
+    start = 기본 환경(실질적으로 사용 안함)
+
+    npm run (prod or dev or start)
+
+    board-frontend
+    "scripts": {
+        "start": "node scripts/start.js",
+        "build": "node scripts/build.js",
+        "test": "node scripts/test.js --env=jsdom"
+    },
+    
+    start = development 환경
+    build = 프로젝트 build(소스 번들링 해서 결과 소스를 build 하위에 저장)
+    test = test 환경(실질적으로 사용안함)
+
+    npm run (start or build or test)
 
 서버단은 /config아래에 있는 secret.js
 (DB, sns 로그인 정보. 입력값은 각 소셜 로그인 참고. 입력 항목이 직관적이니 어려움은 없을 것이라 판단됨)
 프론트는 /env.* 파일에 있는 properties값 입력해야함. env파일의 REACT_APP_SERVER_HOST값은 server쪽 host 주소.
 
 # 고민중인거....
-1.
-프론트 쪽 개발 시 webpack dev server를 올리게 된다(build시에는 상관없음). 로그인 관련 처리 시
-redirect하는 부분이 필요함. 서버 -> webpack dev server로 redirect 시 redirect 주소,port를 서버 쪽에서 알고 있어야됨....
-근데 이게 개발 시 문제고 배포 시에는 서버단 하나만 올리고 프론트는 그냥 build해서 올리면 되는데 webpack dev server 주소를
-서버단에서 신경 써야 하는지 고민중... 현재 그냥 하드 코딩함
-##17.12.22 ==> 안하는게 더 귀찮고 헤깔려서 그냥 간단하게 만듦
+### 1
+    프론트 쪽 개발 시 webpack dev server를 올리게 된다(build시에는 상관없음). 로그인 관련 처리 시
+    redirect하는 부분이 필요함. 서버 -> webpack dev server로 redirect 시 redirect 주소,port를 서버 쪽에서 알고 있어야됨....
+    근데 이게 개발 시 문제고 배포 시에는 서버단 하나만 올리고 프론트는 그냥 build해서 올리면 되는데 webpack dev server 주소를
+    서버단에서 신경 써야 하는지 고민중... 현재 그냥 하드 코딩함
+    ## 17.12.22 ==> 안하는게 더 귀찮고 헤깔려서 그냥 간단하게 만듦
+    
+### 2
+    get으로 파라미터 넘길 때 encoding, decoding 해야할꺼 같음.
+    일단 귀찮아서 보류중
