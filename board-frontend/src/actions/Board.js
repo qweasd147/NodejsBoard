@@ -30,13 +30,13 @@ export function BoardListRequest(pageNum, keyword, searchWord) {
         dispatch(dataLoading());
         dispatch(listBoardWait());
         
-        let requestURL = BOARD_API+pageNum;
+        let queryStr = "";
 
         if(keyword && searchWord){
-            requestURL = requestURL+"?keyword="+keyword+"&searchWord="+searchWord;
+            queryStr = `?keyword=${keyword}&searchWord=${searchWord}&page=${pageNum}`;
         }
 
-        return requestGET(requestURL)
+        return requestGET(BOARD_API+queryStr)
         .then((response) => {
             dispatch(listBoardSuccess(response.data));
             dispatch(dataLoadingComplete());
@@ -118,7 +118,7 @@ export function boardSelectRequest(_id){
         dispatch(dataLoading());
         dispatch(selectBoardWait());
 
-        return requestGET(BOARD_API+"select/"+_id)
+        return requestGET(BOARD_API+_id)
         .then((response) => {
             dispatch(selectBoardSuccess(response.data));
             dispatch(dataLoadingComplete());

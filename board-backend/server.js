@@ -10,14 +10,14 @@ const cookieSession = require('cookie-session');
 const flash = require('connect-flash'); 
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
-const cors = require('cors')();
+//const cors = require('cors')();
 
 const secretConf = require('./config/secret');
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(morgan('dev'));
-app.use(cors);            //어느 host 든 ajax 요청 허용. TODO : 나중에 특정 호스트만 처리할 수 있게 막을 수도 있음
+//app.use(cors);            //어느 host 든 ajax 요청 허용. TODO : 나중에 특정 호스트만 처리할 수 있게 막을 수도 있음
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

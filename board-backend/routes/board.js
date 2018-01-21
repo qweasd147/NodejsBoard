@@ -49,26 +49,30 @@ const upload = multer({ storage: storage });
 /**
  * Board List
  */
-router.get('/:page', (req, resp) => {
-    const page = req.params.page || 1;
+router.get('/', (req, resp) => {
 
     const {
         keyword
         , searchWord
+        , page
     } = req.query
 
     const perPage = 10; //하나의 페이지 당 출력 게시글
     
     let findParams = {"state" : 1};
 
+    //state(게시물 상태값)은 검색 조건과 무관해야함!
     if(keyword && searchWord && (keyword != "state")){
-        findParams[keyword] = searchWord;
+
+        const arrSearchWord = searchWord.split(" ").filter((token)=>token);
+
+        findParams[keyword] = { $in : arrSearchWord};
     }
 
     Board.find(findParams).count((err,count)=>{
         Board.find(findParams).sort({"_id": -1})
         .limit(perPage)
-        .skip(perPage*(page-1))
+        .skip(perPage*((page || 1)-1))
         .select('subject contents writer date tag count')
         .exec((err, boardList) => {
             if(err) throw err;
@@ -87,7 +91,7 @@ router.get('/:page', (req, resp) => {
  * errCode
  * 2 -> 잘못된 아이디
  */
-router.get('/select/:id', (req, resp) => {
+router.get('/:id', (req, resp) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
