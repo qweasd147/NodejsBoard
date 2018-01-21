@@ -119,18 +119,14 @@ router.get('/select/:id', (req, resp) => {
     Board.findOneAndUpdate(
         { "_id" : req.params.id, "state" : 1}
         ,{ $inc :  {count : 1}}
-        ,{ "projection": {
-            "file": {
-                $elemMatch: {"state" : 1 } 
-                }
-            }
-        }
         )
         .select(
             'subject contents writer date tag count '
-            +'file._id file.originName file.ext file.size')
+            +'file._id file.originName file.ext file.size file.state')
         .exec((err, selectData)=>{
             if(err) throw err;
+
+            selectData.file = selectData.file.filter((item)=>item.state===1);
 
             // IF board DOES NOT EXIST
             if(!selectData) {
@@ -310,10 +306,16 @@ router.get('/download/:boardId/:fileId',(req,resp)=>{
 
 
     //TODO : 파일이 삭제 되었는지 안되어 있는지 검사해야함
-    Board.findOne({_id : mongoose.Types.ObjectId(boardId)
-        , 'file._id': mongoose.Types.ObjectId(fileId)
-    },"file"
-    ,(err, fileData) => {
+    Board.findOne({
+        _id : mongoose.Types.ObjectId(boardId)
+        ,state : 1
+    }
+    ,{'file': {$elemMatch : {
+            _id: mongoose.Types.ObjectId(fileId)
+            ,state : 1
+        }}
+    })
+    .exec((err, fileData) => {
         if(err) throw err;
 
 
