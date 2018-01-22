@@ -35,7 +35,7 @@ class WriteBoard extends React.Component {
         nextState['subject'] = nextProps.selectData.subject;
         nextState['contents'] = nextProps.selectData.contents;
         nextState['count'] = nextProps.selectData.count;
-        nextState['writer'] = nextProps.selectData.tag;
+        nextState['tag'] = nextProps.selectData.tag;
         nextState['uploadedFiles'] = nextProps.selectData.file;
 
         this.setState(nextState);

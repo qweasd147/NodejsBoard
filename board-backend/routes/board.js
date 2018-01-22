@@ -49,7 +49,7 @@ const upload = multer({ storage: storage });
 /**
  * Board List
  */
-router.get('/', (req, resp) => {
+router.get('/', async (req, resp) => {
 
     const {
         keyword
@@ -69,19 +69,17 @@ router.get('/', (req, resp) => {
         findParams[keyword] = { $in : arrSearchWord};
     }
 
-    Board.find(findParams).count((err,count)=>{
-        Board.find(findParams).sort({"_id": -1})
-        .limit(perPage)
-        .skip(perPage*((page || 1)-1))
-        .select('subject contents writer date tag count')
-        .exec((err, boardList) => {
-            if(err) throw err;
-            resp.json({
-                boardList
-                ,count
-                ,page
-            });
-        });
+    const arrPromise = [ Board.listBoard(page || 1, findParams), Board.selectBoardCount(findParams) ];
+
+    const listBoardResults = await Promise.all(arrPromise);
+
+    const boardListData = listBoardResults[0];
+    const boardListCount = listBoardResults[1];
+
+    return resp.json({
+        boardList : boardListData
+        , count :boardListCount
+        , page : page || 1
     });
 });
 
@@ -91,7 +89,7 @@ router.get('/', (req, resp) => {
  * errCode
  * 2 -> 잘못된 아이디
  */
-router.get('/:id', (req, resp) => {
+router.get('/:id', async (req, resp) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -99,51 +97,21 @@ router.get('/:id', (req, resp) => {
         });
     }
 
-    /*
-    Board.findById(req.params.id,
-    'subject contents writer date tag count '
-    +'file._id file.originName file.ext file.size'
-    ,(err, selectData) => {
-        if(err) throw err;
+    const boardOne = await Board.selectBoard(req.params.id, true);
 
-        // IF board DOES NOT EXIST
-        if(!selectData) {
-            return resp.status(404).json({
-                error: "NO RESOURCE",
-                code: 3
-            });
-        }
-
-        return resp.json({
-            selectData
+    if(!boardOne) {
+        return resp.status(404).json({
+            error: "NO RESOURCE",
+            code: 3
         });
+    }
+
+    //삭제 처리 된 파일은 제거. 쿼리문에서 필터링 하는걸 모르겠음...
+    boardOne.file = boardOne.file.filter((item)=>item.state===1);
+
+    return resp.json({
+        selectData : boardOne
     });
-    */
-    
-    Board.findOneAndUpdate(
-        { "_id" : req.params.id, "state" : 1}
-        ,{ $inc :  {count : 1}}
-        )
-        .select(
-            'subject contents writer date tag count '
-            +'file._id file.originName file.ext file.size file.state')
-        .exec((err, selectData)=>{
-            if(err) throw err;
-
-            selectData.file = selectData.file.filter((item)=>item.state===1);
-
-            // IF board DOES NOT EXIST
-            if(!selectData) {
-                return resp.status(404).json({
-                    error: "NO RESOURCE",
-                    code: 3
-                });
-            }
-
-            return resp.json({
-                selectData
-            });
-        });
 });
 
 /**
@@ -152,7 +120,7 @@ router.get('/:id', (req, resp) => {
  * errCode 
  * 1 -> 벨리데이션 오류
  */
-router.post('/', upload.array('uploadFile[]'), (req,resp)=>{
+router.post('/', upload.array('uploadFile[]'), async (req,resp)=>{
     
     //벨리데이션
     if(!(req.body.subject && req.body.contents)){
@@ -172,6 +140,7 @@ router.post('/', upload.array('uploadFile[]'), (req,resp)=>{
     
     let fileArr = getFileObjArr(req.files);
     
+    /*
     let board = new Board({
         subject : req.body.subject,
         contents : req.body.contents,
@@ -186,6 +155,19 @@ router.post('/', upload.array('uploadFile[]'), (req,resp)=>{
         if(err) throw err;
         return resp.json({ success: true });
     });
+    */
+
+    await Board.insertBoard({
+        subject : req.body.subject,
+        contents : req.body.contents,
+        count : 0,
+        writer : req.user.nickName,
+        tag : req.body.tag,
+        file : fileArr,
+        state : 1
+    });
+
+    return resp.json({ success: true });
 });
 
 /**
@@ -197,7 +179,7 @@ router.post('/', upload.array('uploadFile[]'), (req,resp)=>{
  * 3 -> 해당 글번호 존재안함
  * 4 -> 수정 권한 없음
  */
-router.put('/:id', upload.array('uploadFile[]'), (req,resp)=>{
+router.put('/:id', upload.array('uploadFile[]'), async (req,resp)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -220,48 +202,22 @@ router.put('/:id', upload.array('uploadFile[]'), (req,resp)=>{
         });
     }
     
-    Board.findById(req.params.id, (err, board) => {
-        if(err){
-            throw err
-        };
+    const newBoardData = {
+        subject : req.body.subject
+        , contents : req.body.contents
+        , writer : req.user.nickName
+        , date : {edited : new Date()}
+        , tag : req.body.tag || []
+    }
 
-        // IF board DOES NOT EXIST
-        if(!board) {
-            return resp.status(404).json({
-                error: "NO RESOURCE",
-                code: 3
-            });
-        }
+    const fileArr = getFileObjArr(req.files);
 
-        // MODIFY AND SAVE IN DATABASE
-        board.subject = req.body.subject;
-        board.contents = req.body.contents;
-        board.writer = req.user.nickName,
-        //board.date.edited = Date.now;
-        board.date.edited = new Date();
-        board.tag = req.body.tag;
-        
-        //삭제 요청한 파일 id값을 기준으로 삭제 처리를 진행(flag 번경) 한다.
-        if(Array.isArray(req.body.deleteFile) && Array.isArray(board.file)){
-            for(let i=0;i<req.body.deleteFile.length;i++){
-                for(let j=0;j<board.file.length;j++){
-                    if(board.file[j].equals(req.body.deleteFile[i])){
-                        board.file[j].state=0;
+    const dtchFileArr = Array.isArray(req.body.deleteFile)? req.body.deleteFile : [];
 
-                        continue;
-                    }
-                }
-            }
-        }
-        
+    await Board.updateBoard(req.params.id, newBoardData, fileArr, dtchFileArr);
 
-        board.save((err, board) => {
-            if(err) throw err;
-            return resp.json({
-                success: true,
-                board
-            });
-        });
+    return resp.json({
+        success: true
     });
 });
 
@@ -271,7 +227,7 @@ router.put('/:id', upload.array('uploadFile[]'), (req,resp)=>{
  * errCode
  * 2 -> 잘못된 아이디
  */
-router.delete('/:id', (req, resp) => {
+router.delete('/:id', async (req, resp) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -279,27 +235,20 @@ router.delete('/:id', (req, resp) => {
         });
     }
 
-    Board.update(
-        { "_id" : req.params.id, "state" : 1}
-        , { $set :  {"state" : 0}}
-        ,(err, count, status)=>{
-            if(err) throw err;
+    await Board.deleteBoard(req.params.id);
 
-            return resp.json({
-                success: true
-            });
-        });
+    return resp.json({
+        success: true
+    });
 });
 
 /**
  * download 요청을 한다.
  */
-router.get('/download/:boardId/:fileId',(req,resp)=>{
+router.get('/download/:boardId/:fileId', async (req,resp)=>{
     
     const boardId = req.params.boardId;
     const fileId = req.params.fileId;
-
-    
 
     if(!(mongoose.Types.ObjectId.isValid(boardId) && mongoose.Types.ObjectId.isValid(fileId))){
         return resp.status(404).json({
@@ -308,35 +257,20 @@ router.get('/download/:boardId/:fileId',(req,resp)=>{
             });
     }
 
+    const fileData = await Board.selectBoardFile(boardId, fileId);
 
-    //TODO : 파일이 삭제 되었는지 안되어 있는지 검사해야함
-    Board.findOne({
-        _id : mongoose.Types.ObjectId(boardId)
-        ,state : 1
+    // IF board DOES NOT EXIST
+    if(!(fileData.file.length>0)) {
+        return resp.status(404).json({
+            error: "NO RESOURCE",
+            code: 3
+        });
     }
-    ,{'file': {$elemMatch : {
-            _id: mongoose.Types.ObjectId(fileId)
-            ,state : 1
-        }}
-    })
-    .exec((err, fileData) => {
-        if(err) throw err;
 
+    const fileFullPath = fileData.file[0].uploadedDir +"/"+ fileData.file[0].uploadedName;
+    const originName = fileData.file[0].originName;
 
-        // IF board DOES NOT EXIST
-        if(!(fileData.file.length>0)) {
-            return resp.status(404).json({
-                error: "NO RESOURCE",
-                code: 3
-            });
-        }
-
-        const fileFullPath = fileData.file[0].uploadedDir +"/"+ fileData.file[0].uploadedName;
-        const originName = fileData.file[0].originName;
-
-        resp.download(fileFullPath, originName);
-    });
-
+    resp.download(fileFullPath, originName);
 });
 
 /**

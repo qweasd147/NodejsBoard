@@ -34,6 +34,8 @@ export function BoardListRequest(pageNum, keyword, searchWord) {
 
         if(keyword && searchWord){
             queryStr = `?keyword=${keyword}&searchWord=${searchWord}&page=${pageNum}`;
+        }else{
+            queryStr = `?page=${pageNum}`;
         }
 
         return requestGET(BOARD_API+queryStr)
@@ -164,7 +166,7 @@ export function boardUpdateRequest(formData, _id) {
 
         return requestPUT(BOARD_API+_id, formData, options)
         .then((response) => {
-            dispatch(updateBoardSuccess(response.data));
+            dispatch(updateBoardSuccess());
             dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(updateBoardFail(error.message));
@@ -179,10 +181,9 @@ export function updateBoardWait() {
     };
 }
 
-export function updateBoardSuccess(data) {
+export function updateBoardSuccess() {
     return {
         type: UPDATE_BOARD_SUCCESS
-        , data
     };
 }
 
