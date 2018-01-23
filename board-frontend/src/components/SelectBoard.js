@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+import moment from 'moment';
 
 class SelectBoard extends React.Component {
     constructor(props){
@@ -100,12 +101,12 @@ class SelectBoard extends React.Component {
                                     <td colSpan="5">{this.props.data.subject}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Reg Ip</th>
+                                    <th scope="row">Reg User</th>
                                     <td>{this.props.data.writer}</td>
                                     <th scope="row">Count</th>
                                     <td>{this.props.data.count}</td>
                                     <th scope="row">Date</th>
-                                    <td>{this.props.data.date.edited}</td>
+                                    <td>{moment(this.props.data.date.edited).format('YYYY.MM.D HH:mm')}<br/>({moment(this.props.data.date.edited).fromNow()})</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Contents</th>

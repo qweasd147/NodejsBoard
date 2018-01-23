@@ -140,23 +140,6 @@ router.post('/', upload.array('uploadFile[]'), async (req,resp)=>{
     
     let fileArr = getFileObjArr(req.files);
     
-    /*
-    let board = new Board({
-        subject : req.body.subject,
-        contents : req.body.contents,
-        count : 0,
-        writer : req.user.nickName,
-        tag : req.body.tag,
-        file : fileArr,
-        state : 1
-    });
-    
-    board.save( err => {
-        if(err) throw err;
-        return resp.json({ success: true });
-    });
-    */
-
     await Board.insertBoard({
         subject : req.body.subject,
         contents : req.body.contents,

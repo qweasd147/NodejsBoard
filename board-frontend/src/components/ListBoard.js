@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
+import moment from 'moment';
+
 import SearchBox from './SearchBox';
 import Paging from './Paging';
 
@@ -52,7 +54,7 @@ class ListBoard extends React.Component {
                         <td className="center">{listCnt>0? listCnt - i:''}</td>
                         <td><a href="#none" onClick={(e)=>this.handleClick(e, item)}>{item.subject}</a></td>
                         <td className="center">{item.count}</td>
-                        <td className="center">{item.date.edited}</td>
+                        <td className="center">{moment(item.date.edited).format('YYYY.MM.D')}</td>
                         <td className="center">{item.writer}</td>
                     </tr>
                 );
