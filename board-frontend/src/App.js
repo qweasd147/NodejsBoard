@@ -22,7 +22,6 @@ class App extends Component {
     logOutProcess(){
         this.props.logOutRequest()
         .then((response) => {
-            console.log('setIsLogin');
             this.props.setIsLogin();
         }).catch((error) => {
             this.props.setIsLogin();
