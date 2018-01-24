@@ -6,10 +6,13 @@ nodejs + react 환경에서 기초 게시판 제작.
 ## 1. 사용기술
 
 ### 1.1 back-end
-nodejs(+express) + mongoDB
+nodejs(+express) + mongoDB(3.4.x)
+
+promise(awiat, async 포함)를 사용하여 최대한 깔끔하게 만듦. 때문에 node 버전이 7 이상이어야함
 
 ### 1.2 front-end
-webpack + react + react-router(v4) + redux + axios + jquery + Material
+webpack + react + react-router(v4) + redux + axios + jquery + Material.
+
 create-react-app(framework)을 사용하였음
 
 jquery랑 Material는 디자인 관련 제공해주는 함수를 쓸 목적으로 썼고, 사용하는 부분을 최소화 하려고 노력함.
@@ -31,8 +34,25 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
 
     npm run (prod or dev or start)
 
-/config아래에 있는 secret.js
-(DB, sns 로그인 정보. 입력값은 각 소셜 로그인 참고. 입력 항목이 직관적이니 어려움은 없을 것이라 판단됨)
+/board-backend/config/secret.js 작성
+    {
+        'mongoDB' : {
+            'DBUser' : 'xxxx',
+            'DBPassword' : 'xxxx',
+            'TB' : 'xxxx',
+            'connectURL' : 'mongodb://aaaa:bbbb:cccc/dddd'
+        }
+        , 'passport' : {
+            'naver' : {
+                'clientID' : 'xxxx',
+                'clientSecret' : 'xxxx',
+                'callbackURL' : '/api/authen/login/naver/callback'
+            },
+            .....
+        }
+    }
+passport 하위의 입력값은 각 소셜 로그인 참고. 입력 항목이 직관적이니 어려움은 없을 것이라 판단됨
+DB는 coeectionURL만 작성하여도 사용 가능
 
 ### 2.1 board-frontend
     
@@ -49,6 +69,8 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
     npm run (start or build or test)
 
 프론트는 /env.* 파일에 있는 properties값 입력해야함. env파일의 REACT_APP_SERVER_HOST값은 server쪽 host 주소.
+==> 프록시 설정으로 해결함. dev 환경(npm run start) 때에도 실질적으로 서버가 2개 올라가서 cors 제한을 풀어 줬는데,
+프록시 거쳐서 가서 cors 다시 제한하게 변경함
 
 ## 3. 고민중인거....
 ### 3.1
@@ -61,3 +83,7 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
 ### 3.2
     get으로 파라미터 넘길 때 encoding, decoding 해야할꺼 같음.
     일단 귀찮아서 보류중
+    ## 안해도 됨
+
+### 3.3
+    logger 생각해 봐야하는데, 그냥 간단한거라 구지..?
