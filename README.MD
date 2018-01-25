@@ -6,7 +6,7 @@ nodejs + react 환경에서 기초 게시판 제작.
 ## 1. 사용기술
 
 ### 1.1 back-end
-nodejs(+express) + mongoDB(3.4.x)
+nodejs(+express) + mongoDB(3.4.x) + passport
 
 promise(awiat, async 포함)를 사용하여 최대한 깔끔하게 만듦. 때문에 node 버전이 7 이상이어야함
 
@@ -35,6 +35,7 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
     npm run (prod or dev or start)
 
 /board-backend/config/secret.js 작성
+
     {
         'mongoDB' : {
             'DBUser' : 'xxxx',
@@ -51,6 +52,7 @@ backend랑 frontend 프로젝트는 서로 분리하여 front 쪽은 차후 buil
             .....
         }
     }
+
 passport 하위의 입력값은 각 소셜 로그인 참고. 입력 항목이 직관적이니 어려움은 없을 것이라 판단됨
 DB는 coeectionURL만 작성하여도 사용 가능
 
@@ -69,6 +71,7 @@ DB는 coeectionURL만 작성하여도 사용 가능
     npm run (start or build or test)
 
 프론트는 /env.* 파일에 있는 properties값 입력해야함. env파일의 REACT_APP_SERVER_HOST값은 server쪽 host 주소.
+
 ==> 프록시 설정으로 해결함. dev 환경(npm run start) 때에도 실질적으로 서버가 2개 올라가서 cors 제한을 풀어 줬는데,
 프록시 거쳐서 가서 cors 다시 제한하게 변경함
 
@@ -86,4 +89,4 @@ DB는 coeectionURL만 작성하여도 사용 가능
     ## 안해도 됨
 
 ### 3.3
-    logger 생각해 봐야하는데, 그냥 간단한거라 구지..?
+    logger 모듈 쓸지 말지 생각해 봐야하는데, 그냥 간단한거라 구지..?
