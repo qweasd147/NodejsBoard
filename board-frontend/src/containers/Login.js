@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
+import withBaseWrapHoc from './withBaseWrap';
 
 class Login extends React.Component{
     render(){
@@ -28,4 +28,6 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps)(Login);
+const connectComponent = connect(mapStateToProps, null)(Login);
+
+export default withBaseWrapHoc(connectComponent);

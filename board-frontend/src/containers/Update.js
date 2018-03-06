@@ -4,6 +4,7 @@ import { WriteBoard } from '../components';
 import { boardSelectRequest, boardUpdateRequest } from '../actions/Board';
 import {withRouter} from "react-router-dom";
 import queryString from 'query-string';
+import withBaseWrapHoc from './withBaseWrap';
 
 const INDEX_PAGE = '/';
 
@@ -53,6 +54,7 @@ const mapStateToProps = (state) => {
         boardData : state.board.selectOne.data
         , isLogin : state.authen.isLogin
         , status : state.board.selectOne.status
+        , msg : state.board.selectOne.msg
     }
 };
 
@@ -67,4 +69,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Update));
+const connectComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(Update));
+
+export default withBaseWrapHoc(connectComponent);

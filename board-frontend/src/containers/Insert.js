@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { WriteBoard } from '../components';
 import { boardWriteRequest } from '../actions/Board';
 import {withRouter} from "react-router-dom";
+import withBaseWrapHoc from './withBaseWrap';
 
 const INDEX_PAGE='/';
 
@@ -38,4 +39,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Insert));
+const connectComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(Insert));
+
+export default withBaseWrapHoc(connectComponent);

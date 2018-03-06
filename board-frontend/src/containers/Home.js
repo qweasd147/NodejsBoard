@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { ListBoard } from '../components';
 import { BoardListRequest } from '../actions/Board';
 import {withRouter} from "react-router-dom";
+import withBaseWrapHoc from './withBaseWrap';
 
 const SELECT_PAGE = '/selectBoard';
 
@@ -13,6 +14,9 @@ class Home extends React.Component{
         this.handleSelect = this.handleSelect.bind(this);
     }
 
+    componentDidUpdate(){
+        console.log('update');
+    }
     handleSelect(_boardID){
         this.props.history.push(SELECT_PAGE+'?board='+_boardID);
     }
@@ -21,6 +25,12 @@ class Home extends React.Component{
             //
         });
     }
+
+    shouldComponentUpdate(prevProps, prevState) {
+        console.log('check select');
+        return true;
+    }
+
 
     render(){
         return (
@@ -45,6 +55,8 @@ const mapStateToProps = (state) => {
         , totCount : state.board.list.totCount
         , currentPage : state.board.list.currentPage
         , isLogin : state.authen.isLogin
+        , status : state.board.list.status
+        , msg : state.board.list.msg
     }
 };
 
@@ -56,4 +68,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Home));
+const connectComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(Home));
+
+export default withBaseWrapHoc(connectComponent);

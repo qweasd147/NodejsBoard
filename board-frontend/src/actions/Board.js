@@ -15,10 +15,7 @@ import {
     , DELETE_BOARD_SUCCESS
     , DELETE_BOARD_FAIL
 } from './ActionTypes';
-import { dataLoading, dataLoadingComplete } from './Common';
 
-//TODO : action에서 다른 작업(toast) 하는게 맞는건가 고민중
-import { Materialize } from '../utils/thirdPartyLib';
 import { requestGET, requestPOST, requestPUT, requestDELETE } from '../utils/ajaxUtils';
 
 const BOARD_API = "/api/board/";
@@ -27,7 +24,6 @@ const BOARD_API = "/api/board/";
 export function BoardListRequest(pageNum, keyword, searchWord) {
     return (dispatch) => {
 
-        dispatch(dataLoading());
         dispatch(listBoardWait());
         
         let queryStr = "";
@@ -41,10 +37,8 @@ export function BoardListRequest(pageNum, keyword, searchWord) {
         return requestGET(BOARD_API+queryStr)
         .then((response) => {
             dispatch(listBoardSuccess(response.data));
-            dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(listBoardFail(error.message));
-            dispatch(dataLoadingComplete());
         });
     };
 }
@@ -63,7 +57,6 @@ export function listBoardSuccess(data) {
 }
 
 export function listBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: LIST_BOARD_FAIL
         , msg
@@ -74,7 +67,6 @@ export function listBoardFail(msg) {
 export function boardWriteRequest(formData) {
     return (dispatch) => {
 
-        dispatch(dataLoading());
         dispatch(insertBoardWait());
 
         var options = {
@@ -84,10 +76,8 @@ export function boardWriteRequest(formData) {
         return requestPOST(BOARD_API, formData, options)
         .then((response) => {
             dispatch(insertBoardSuccess(response.data));
-            dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(insertBoardFail(error.message));
-            dispatch(dataLoadingComplete());
         });
     };
 }
@@ -106,7 +96,6 @@ export function insertBoardSuccess(data) {
 }
 
 export function insertBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: INSERT_BOARD_FAIL
         , msg
@@ -117,16 +106,13 @@ export function insertBoardFail(msg) {
 export function boardSelectRequest(_id){
     return (dispatch)=>{
 
-        dispatch(dataLoading());
         dispatch(selectBoardWait());
 
         return requestGET(BOARD_API+_id)
         .then((response) => {
             dispatch(selectBoardSuccess(response.data));
-            dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(selectBoardFail(error.message));
-            dispatch(dataLoadingComplete());
         });
     }
 }
@@ -146,7 +132,6 @@ export function selectBoardSuccess(data) {
 }
 
 export function selectBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: SELECT_BOARD_FAIL
         , msg
@@ -157,7 +142,6 @@ export function selectBoardFail(msg) {
 export function boardUpdateRequest(formData, _id) {
     return (dispatch) => {
 
-        dispatch(dataLoading());
         dispatch(updateBoardWait());
 
         var options = {
@@ -167,10 +151,8 @@ export function boardUpdateRequest(formData, _id) {
         return requestPUT(BOARD_API+_id, formData, options)
         .then((response) => {
             dispatch(updateBoardSuccess());
-            dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(updateBoardFail(error.message));
-            dispatch(dataLoadingComplete());
         });
     };
 }
@@ -188,7 +170,6 @@ export function updateBoardSuccess() {
 }
 
 export function updateBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: UPDATE_BOARD_FAIL
         , msg
@@ -199,16 +180,13 @@ export function updateBoardFail(msg) {
 export function boardDeleteRequest(_id){
     return (dispatch)=>{
 
-        dispatch(dataLoading());
         dispatch(deleteBoardWait());
 
         return requestDELETE(BOARD_API+_id)
         .then((response) => {
             dispatch(deleteBoardSuccess(response.data));
-            dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(deleteBoardFail(error.message));
-            dispatch(dataLoadingComplete());
         });
     }
 }
@@ -228,7 +206,6 @@ export function deleteBoardSuccess(data) {
 }
 
 export function deleteBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
     return {
         type: DELETE_BOARD_FAIL
         , msg

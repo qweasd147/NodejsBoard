@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { SelectBoard } from '../components';
 import { boardSelectRequest, boardDeleteRequest } from '../actions/Board';
 import {withRouter} from "react-router-dom";
+import withBaseWrapHoc from './withBaseWrap';
 import queryString from 'query-string';
 
 const UPDATE_PAGE='/updateBoard';
@@ -17,7 +18,6 @@ class Select extends React.Component{
 
         this.state = {
             boardId : ''
-            , onLoad : false
         }
     }
     
@@ -31,9 +31,7 @@ class Select extends React.Component{
             boardId
         });
         this.props.boardSelectRequest(boardId).then(()=>{
-            this.setState({
-                onLoad : true
-            });
+            //
         });
     }
 
@@ -48,7 +46,7 @@ class Select extends React.Component{
     render(){
         return(
             <SelectBoard
-                data={this.state.onLoad == true? this.props.boardData: undefined}
+                data={this.props.boardData}
                 isLogin={this.props.isLogin}
                 updateView = {this.handleUpdateView}
                 deleteBoard = {this.props.boardDeleteRequest}
@@ -64,6 +62,7 @@ const mapStateToProps = (state) => {
         boardData : state.board.selectOne.data
         , isLogin : state.authen.isLogin
         , status : state.board.selectOne.status
+        , msg : state.board.selectOne.msg
     }
 };
 
@@ -78,4 +77,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Select));
+const connectComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(Select));
+
+export default withBaseWrapHoc(connectComponent);
