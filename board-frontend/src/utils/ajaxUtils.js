@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const HOST_NAME = process.env.REACT_APP_SERVER_HOST || "";
-const HOST_NAME = "";
+const HOST_NAME = process.env.REACT_APP_SERVER_HOST || "";
+//const HOST_NAME = "";
 
 const METHOD = {
     get : 'get'
@@ -38,7 +38,7 @@ export function requestDELETE(apiURL){
 //요청 한 function을 구해서 ajax 호출 시 맞는 매개변수값을 넘겨준다.
 //axios 에선 첫번째 매개변수를 url로 고정함.
 function requestAjax(apiURL, method, params){
-
+    
     apiURL = HOST_NAME+apiURL;
 
     let callFn;

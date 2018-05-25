@@ -26,7 +26,7 @@ const BOARD_API = "/api/board/";
 //글 목록
 export function BoardListRequest(pageNum, keyword, searchWord) {
     return (dispatch) => {
-
+        
         dispatch(dataLoading());
         dispatch(listBoardWait());
         
@@ -80,7 +80,7 @@ export function boardWriteRequest(formData) {
         var options = {
             headers: { 'content-type': 'multipart/form-data' }
         };
-
+        
         return requestPOST(BOARD_API, formData, options)
         .then((response) => {
             dispatch(insertBoardSuccess(response.data));

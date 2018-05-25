@@ -17,7 +17,7 @@ class WriteBoard extends React.Component {
             , imagePreviewUrl: ''
             , subject : ''
             , contents : ''
-            , count : ''
+            , hits : ''
             , writer : ''
             , deleteFiles : []      //삭제 요청할 파일 목록
         };
@@ -34,7 +34,7 @@ class WriteBoard extends React.Component {
 
         nextState['subject'] = nextProps.selectData.subject;
         nextState['contents'] = nextProps.selectData.contents;
-        nextState['count'] = nextProps.selectData.count;
+        nextState['hits'] = nextProps.selectData.hits;
         nextState['tag'] = nextProps.selectData.tag;
         nextState['uploadedFiles'] = nextProps.selectData.file;
 

@@ -53,8 +53,8 @@ class ListBoard extends React.Component {
                     <tr key={i.toString()}>
                         <td className="center">{listCnt>0? listCnt - i:''}</td>
                         <td><a href="#none" onClick={(e)=>this.handleClick(e, item)}>{item.subject}</a></td>
-                        <td className="center">{item.count}</td>
-                        <td className="center">{moment(item.date.edited).format('YYYY.MM.D')}</td>
+                        <td className="center">{item.hits}</td>
+                        <td className="center">{moment(item.regDate).format('YYYY.MM.D')}</td>
                         <td className="center">{item.writer}</td>
                     </tr>
                 );
