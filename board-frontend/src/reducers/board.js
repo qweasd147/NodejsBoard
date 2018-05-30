@@ -106,7 +106,7 @@ export default function board(appState, action){
         case types.SELECT_BOARD_SUCCESS:
             return update(appState, {
                 selectOne : {
-                    data : {$set:action.data.selectData}
+                    data : {$set:action.data}
                     , status : {$set:types.INSERT_BOARD_SUCCESS}
                 }
             });

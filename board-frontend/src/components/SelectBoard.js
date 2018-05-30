@@ -21,8 +21,8 @@ class SelectBoard extends React.Component {
     handleFileClick(e, item){
         e.preventDefault();
 
-        const boardID = this.props.data._id;
-        const fileID = item._id;
+        const boardID = this.props.data.idx;
+        const fileID = item.idx;
         
         this.setState({
             boardID
@@ -49,7 +49,7 @@ class SelectBoard extends React.Component {
 
     handleDeleteBoard(e){
 
-        const boardId = this.props.data._id;
+        const boardId = this.props.data.idx;
 
         if(boardId){
             this.props.deleteBoard(boardId).then(()=>{
@@ -87,6 +87,16 @@ class SelectBoard extends React.Component {
             });
         };
 
+        const convertToContent = contents =>{
+            /*
+            return contents.split('\n').map( line => {
+                return (<span>{line}<br/></span>)
+            });
+            */
+
+            return contents.replace(/\n/g, '<br/>');
+        }
+
         const hdnStyle = {
             display : "none"
         }
@@ -104,30 +114,46 @@ class SelectBoard extends React.Component {
                                     <th scope="row">Reg User</th>
                                     <td>{this.props.data.writer}</td>
                                     <th scope="row">Count</th>
-                                    <td>{this.props.data.count}</td>
+                                    <td>{this.props.data.hits}</td>
                                     <th scope="row">Date</th>
-                                    <td>{moment(this.props.data.date.edited).format('YYYY.MM.D HH:mm')}<br/>({moment(this.props.data.date.edited).fromNow()})</td>
+                                    <td>{
+                                        moment(this.props.data.regDate).format('YYYY.MM.D HH:mm')}
+                                        <br/>
+                                        ({moment(this.props.data.regDate).fromNow()})
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Contents</th>
-                                    <td colSpan="5">{this.props.data.contents}</td>
+                                    <td colSpan="5"
+                                        dangerouslySetInnerHTML={ {__html: convertToContent(this.props.data.contents)} }
+                                    ></td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">Tag</th>
-                                    <td colSpan="5">
-                                        <div>
-                                            {mapToComponentChips(this.props.data.tag)}
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Attach File</th>
-                                    <td colSpan="5">
-                                        <ul>
-                                            {mapToComponentFile(this.props.data.file)}
-                                        </ul>
-                                    </td>
-                                </tr>
+                                {
+                                    /**
+                                    <tr>
+                                        <th scope="row">Tag</th>
+                                        <td colSpan="5">
+                                            <div>
+                                                {mapToComponentChips(this.props.data.tagList)}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                     */
+                                }
+                                {
+                                    /**
+                                    <tr>
+                                        <th scope="row">Attach File</th>
+                                        <td colSpan="5">
+                                            <ul>
+                                                {mapToComponentFile(this.props.data.fileList)}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                     */
+                                }
+                                
+                                
                             </tbody>
                         </table>
                     </div>
@@ -164,10 +190,10 @@ SelectBoard.defaultProps = {
         subject:""
         ,contents:"잘못된 접근입니다."
         ,writer:""
-        ,date : {}
-        ,count:"0"
-        ,tag: []
-        ,file : []
+        ,regDate : ""
+        ,hits:"0"
+        ,tagList: []
+        ,fileList : []
         ,state : "init"
     }
 };

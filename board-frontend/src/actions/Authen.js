@@ -27,6 +27,9 @@ export function setIsLogin(boolean){
     if(loginProvider)   _isLogin = true;
     else                _isLogin = false;
 
+    //TODO : 현재 로그인 처리를 적용하지 않아서, 임시로 항상 로그인 상태로 처리
+    _isLogin = true;
+
     return {
         type:SET_IS_LOGIN
         , isLogin : _isLogin

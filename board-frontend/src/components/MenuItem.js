@@ -53,8 +53,7 @@ class MenuItem extends React.Component {
         return (
             <div>
                 {
-                    //this.props.isLogin == true ? loginMenu : notLoginMenu 현재 로그인 기능 없어서 임시로 오픈
-                    this.props.isLogin == true ? loginMenu : loginMenu
+                    this.props.isLogin == true ? loginMenu : notLoginMenu
                 }
             </div>
         );

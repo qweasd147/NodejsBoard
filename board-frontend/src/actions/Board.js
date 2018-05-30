@@ -164,7 +164,7 @@ export function boardUpdateRequest(formData, _id) {
             headers: { 'content-type': 'multipart/form-data' }
         };
 
-        return requestPUT(BOARD_API+_id, formData, options)
+        return requestPOST(BOARD_API+_id, formData, options)
         .then((response) => {
             dispatch(updateBoardSuccess());
             dispatch(dataLoadingComplete());

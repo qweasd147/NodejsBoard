@@ -17,8 +17,8 @@ class ListBoard extends React.Component {
     handleClick(e, item){
         e.preventDefault();
 
-        if(item._id)
-            this.props.handleSelectBoard(item._id);
+        if(item.idx)
+            this.props.handleSelectBoard(item.idx);
     }
 
     render() {
