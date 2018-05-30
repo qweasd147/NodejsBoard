@@ -87,6 +87,16 @@ class SelectBoard extends React.Component {
             });
         };
 
+        const convertToContent = contents =>{
+            /*
+            return contents.split('\n').map( line => {
+                return (<span>{line}<br/></span>)
+            });
+            */
+
+            return contents.replace(/\n/g, '<br/>');
+        }
+
         const hdnStyle = {
             display : "none"
         }
@@ -110,7 +120,9 @@ class SelectBoard extends React.Component {
                                 </tr>
                                 <tr>
                                     <th scope="row">Contents</th>
-                                    <td colSpan="5">{this.props.data.contents}</td>
+                                    <td colSpan="5"
+                                        dangerouslySetInnerHTML={ {__html: convertToContent(this.props.data.contents)} }
+                                    ></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Tag</th>
