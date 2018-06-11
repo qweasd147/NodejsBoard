@@ -24,7 +24,7 @@ import { requestGET, requestPOST, requestPUT, requestDELETE } from '../utils/aja
 const BOARD_API = "/api/board/";
 
 //글 목록
-export function BoardListRequest(pageNum, keyword, searchWord) {
+export function BoardListRequest(pageNum, condition, searchWord) {
     return (dispatch) => {
         
         dispatch(dataLoading());
@@ -32,10 +32,10 @@ export function BoardListRequest(pageNum, keyword, searchWord) {
         
         let queryStr = "";
 
-        if(keyword && searchWord){
-            queryStr = `?keyword=${keyword}&searchWord=${searchWord}&page=${pageNum}`;
+        if(condition && searchWord){
+            queryStr = `?searchCondition=${condition}&searchKeyWord=${searchWord}&pageIdx=${pageNum}`;
         }else{
-            queryStr = `?page=${pageNum}`;
+            queryStr = `?pageIdx=${pageNum}`;
         }
 
         return requestGET(BOARD_API+queryStr)

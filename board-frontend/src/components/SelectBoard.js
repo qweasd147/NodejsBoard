@@ -68,7 +68,7 @@ class SelectBoard extends React.Component {
                         <div className="collection-item valign-wrapper">
                             <div className="left">
                                 <div>
-                                    <a href="#none" onClick={(e)=>{this.handleFileClick(e,file)}}>{file.originName}</a>
+                                    <a href="#none" onClick={(e)=>{this.handleFileClick(e,file)}}>{file.originFileName}</a>
                                 </div>
                             </div>
                         </div>
@@ -140,20 +140,14 @@ class SelectBoard extends React.Component {
                                     </tr>
                                      */
                                 }
-                                {
-                                    /**
-                                    <tr>
-                                        <th scope="row">Attach File</th>
-                                        <td colSpan="5">
-                                            <ul>
-                                                {mapToComponentFile(this.props.data.fileList)}
-                                            </ul>
-                                        </td>
-                                    </tr>
-                                     */
-                                }
-                                
-                                
+                                <tr>
+                                    <th scope="row">Attach File</th>
+                                    <td colSpan="5">
+                                        <ul>
+                                            {mapToComponentFile(this.props.data.fileList)}
+                                        </ul>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

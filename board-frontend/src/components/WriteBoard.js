@@ -36,7 +36,7 @@ class WriteBoard extends React.Component {
         nextState['contents'] = nextProps.selectData.contents;
         nextState['hits'] = nextProps.selectData.hits;
         nextState['tag'] = nextProps.selectData.tag;
-        nextState['uploadedFiles'] = nextProps.selectData.file;
+        nextState['uploadedFiles'] = nextProps.selectData.fileList;
 
         this.setState(nextState);
     }
@@ -168,9 +168,8 @@ class WriteBoard extends React.Component {
             //화면에서 제거
 
             const _uploadedFiles = this.state.uploadedFiles;
-
             const fileIdx = _uploadedFiles.findIndex((item)=>
-                filekey === item._id
+                filekey === item.idx
             );
 
             this.setState({
@@ -213,21 +212,21 @@ class WriteBoard extends React.Component {
 
             let fileNameKey;
 
-            if(isUploaded)  fileNameKey = "originName";
+            if(isUploaded)  fileNameKey = "originFileName";
             else            fileNameKey = "name";
 
             if(Array.isArray(files)){
                 return files.map((file, i) => {
                     let fileKey;    //물리적 파일 리스트 중 특정 파일을 구분할 수 있는 파일 key
     
-                    //이미 업로드 된 파일은 _id값으로,
+                    //이미 업로드 된 파일은 idx값으로,
                     //프론트에서만 올라가 있는 파일은 마지막 index값으로 key값을 설정한다.
-                    if(isUploaded)  fileKey = file['_id'];
+                    if(isUploaded)  fileKey = file['idx'];
                     else            fileKey = this.state.dropFiles.length -1;
     
                     return (
                         <li className="collection-item" key={i.toString()}>
-                            <div>{file[fileNameKey]} ({(file.size / Math.pow(1024,2)).toFixed(2)} MB)
+                            <div>{file[fileNameKey]} ({(file.fileSize / Math.pow(1024,2)).toFixed(2)} MB)
                                 <a href="#none" className="secondary-content" onClick={(e)=>this.handleFileDelete(e, fileKey, isUploaded)}>
                                 <i className="material-icons">delete</i></a>
                             </div>
