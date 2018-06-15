@@ -15,10 +15,8 @@ import {
     , DELETE_BOARD_SUCCESS
     , DELETE_BOARD_FAIL
 } from './ActionTypes';
-import { dataLoading, dataLoadingComplete } from './Common';
-
-//TODO : action에서 다른 작업(toast) 하는게 맞는건가 고민중
-import { Materialize } from '../utils/thirdPartyLib';
+import { dataLoading, dataLoadingComplete
+    , waitHandler, successHandler, failHandler, getErrMsg } from './Common';
 import { requestGET, requestPOST, requestPUT, requestDELETE } from '../utils/ajaxUtils';
 
 const BOARD_API = "/api/board/";
@@ -40,34 +38,33 @@ export function BoardListRequest(pageNum, condition, searchWord) {
 
         return requestGET(BOARD_API+queryStr)
         .then((response) => {
-            dispatch(listBoardSuccess(response.data));
+            dispatch(listBoardSuccess(response.data.data));
             dispatch(dataLoadingComplete());
         }).catch((error) => {
-            dispatch(listBoardFail(error.message));
+            dispatch(listBoardFail(getErrMsg(error)));
             dispatch(dataLoadingComplete());
         });
     };
 }
 
 export function listBoardWait() {
-    return {
+    return waitHandler(null, false, {
         type: LIST_BOARD_WAIT
-    };
+    });
 }
 
 export function listBoardSuccess(data) {
-    return {
+    return successHandler(null, false, {
         type: LIST_BOARD_SUCCESS
         , data
-    };
+    });
 }
 
 export function listBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
-    return {
+    return failHandler(msg, true, {
         type: LIST_BOARD_FAIL
         , msg
-    };
+    });
 }
 
 //글쓰기
@@ -86,31 +83,30 @@ export function boardWriteRequest(formData) {
             dispatch(insertBoardSuccess(response.data));
             dispatch(dataLoadingComplete());
         }).catch((error) => {
-            dispatch(insertBoardFail(error.message));
+            dispatch(insertBoardFail(getErrMsg(error)));
             dispatch(dataLoadingComplete());
         });
     };
 }
 
 export function insertBoardWait() {
-    return {
+    return waitHandler(null, false, {
         type: INSERT_BOARD_WAIT
-    };
+    });
 }
 
 export function insertBoardSuccess(data) {
-    return {
+    return successHandler(null, true, {
         type: INSERT_BOARD_SUCCESS
         , data
-    };
+    });
 }
 
 export function insertBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
-    return {
+    return failHandler(msg, false, {
         type: INSERT_BOARD_FAIL
         , msg
-    };
+    });
 }
 
 //글 상세
@@ -122,10 +118,10 @@ export function boardSelectRequest(_id){
 
         return requestGET(BOARD_API+_id)
         .then((response) => {
-            dispatch(selectBoardSuccess(response.data));
+            dispatch(selectBoardSuccess(response.data.data));
             dispatch(dataLoadingComplete());
         }).catch((error) => {
-            dispatch(selectBoardFail(error.message));
+            dispatch(selectBoardFail(getErrMsg(error)));
             dispatch(dataLoadingComplete());
         });
     }
@@ -133,24 +129,23 @@ export function boardSelectRequest(_id){
 
 
 export function selectBoardWait() {
-    return {
+    return waitHandler(null, false, {
         type: SELECT_BOARD_WAIT
-    };
+    });
 }
 
 export function selectBoardSuccess(data) {
-    return {
+    return successHandler(null, false, {
         type: SELECT_BOARD_SUCCESS
         , data
-    };
+    });
 }
 
 export function selectBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
-    return {
+    return failHandler(msg, true, {
         type: SELECT_BOARD_FAIL
         , msg
-    };
+    });
 }
 
 //글 수정
@@ -169,30 +164,29 @@ export function boardUpdateRequest(formData, _id) {
             dispatch(updateBoardSuccess());
             dispatch(dataLoadingComplete());
         }).catch((error) => {
-            dispatch(updateBoardFail(error.message));
+            dispatch(updateBoardFail(getErrMsg(error)));
             dispatch(dataLoadingComplete());
         });
     };
 }
 
 export function updateBoardWait() {
-    return {
+    return waitHandler(null, false, {
         type: UPDATE_BOARD_WAIT
-    };
+    });
 }
 
 export function updateBoardSuccess() {
-    return {
+    return successHandler(null, true, {
         type: UPDATE_BOARD_SUCCESS
-    };
+    });
 }
 
 export function updateBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
-    return {
+    return failHandler(msg, true, {
         type: UPDATE_BOARD_FAIL
         , msg
-    };
+    });
 }
 
 //글 삭제
@@ -207,7 +201,7 @@ export function boardDeleteRequest(_id){
             dispatch(deleteBoardSuccess(response.data));
             dispatch(dataLoadingComplete());
         }).catch((error) => {
-            dispatch(deleteBoardFail(error.message));
+            dispatch(deleteBoardFail(getErrMsg(error)));
             dispatch(dataLoadingComplete());
         });
     }
@@ -215,22 +209,21 @@ export function boardDeleteRequest(_id){
 
 
 export function deleteBoardWait() {
-    return {
+    return waitHandler(null, false, {
         type: DELETE_BOARD_WAIT
-    };
+    });
 }
 
 export function deleteBoardSuccess(data) {
-    return {
+    return successHandler(null, true, {
         type: DELETE_BOARD_SUCCESS
         , data
-    };
+    });
 }
 
 export function deleteBoardFail(msg) {
-    Materialize.toast(msg || '오류가 발생 하였습니다.', 2000);
-    return {
+    return failHandler(msg, true, {
         type: DELETE_BOARD_FAIL
         , msg
-    };
+    });
 }
