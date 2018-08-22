@@ -3,8 +3,12 @@ import {
     , LOGOUT_WAIT
     , LOGOUT_SUCCESS
     , LOGOUT_FAIL
+    , LIST_THIRDPARTY_URL_WAIT
+    , LIST_THIRDPARTY_URL_SUCCESS
+    , LIST_THIRDPARTY_URL_FAIL
 } from './ActionTypes';
-import { dataLoading, dataLoadingComplete } from './Common';
+import { dataLoading, dataLoadingComplete
+    , waitHandler, successHandler, failHandler, getErrMsg } from './Common';
 
 import { requestGET } from '../utils/ajaxUtils';
 import cookieUtils from '../utils/cookieUtils';
@@ -13,6 +17,7 @@ import { Materialize } from '../utils/thirdPartyLib';
 
 const LOG_OUT_API = "/api/authen/logout/";
 const USER_INFO = "/api/authen/userInfo";
+const LOGIN_THIRD_PARTY_URL_API = "/api";       //third party 로그인 url 목록 요청
 
 /**
  * 쿠키 값으로 로그인 상태여부 판별
@@ -92,4 +97,41 @@ export function userInfoRequest() {
             dispatch(dataLoadingComplete());
         });
     };
+}
+
+export function thirdPartyUrlRequest() {
+    return (dispatch) => {
+
+        dispatch(dataLoading());
+        dispatch(thirdPartyWait());
+        
+        return requestGET(LOGIN_THIRD_PARTY_URL_API)
+        .then((response) => {
+            dispatch(thirdPartySuccess(response.data));
+            dispatch(dataLoadingComplete());
+        }).catch((error) => {
+            dispatch(thirdPartyFail(getErrMsg(error)));
+            dispatch(dataLoadingComplete());
+        });
+    };
+}
+
+function thirdPartyWait() {
+    return waitHandler(null, false, {
+        type: LIST_THIRDPARTY_URL_WAIT
+    });
+}
+
+function thirdPartySuccess(data) {
+    return successHandler(null, false, {
+        type: LIST_THIRDPARTY_URL_SUCCESS
+        , data
+    });
+}
+
+function thirdPartyFail(msg) {
+    return failHandler(msg, true, {
+        type: LIST_THIRDPARTY_URL_FAIL
+        , msg
+    });
 }

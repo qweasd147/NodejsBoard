@@ -42,3 +42,8 @@ export const CHECK_LOGIN_DATA = "CHECK_LOGIN_DATA";
 //data loding status
 export const DATA_LOADING           = "WAIT";
 export const DATA_LOADING_COMPLETE  = "DONE";
+
+//third party login을 위한 url 목록 요청
+export const LIST_THIRDPARTY_URL_WAIT        = "LIST_THIRDPARTY_URL_"+WAIT_POSTFIX;
+export const LIST_THIRDPARTY_URL_SUCCESS     = "LIST_THIRDPARTY_URL_"+SUCCESS_POSTFIX;
+export const LIST_THIRDPARTY_URL_FAIL        = "LIST_THIRDPARTY_URL_"+FAIL_POSTFIX;

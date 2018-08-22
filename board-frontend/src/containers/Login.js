@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { thirdPartyUrlRequest } from '../actions/Authen';
+import {withRouter} from "react-router-dom";
 
 
 class Login extends React.Component{
@@ -22,10 +24,12 @@ class Login extends React.Component{
     }
 }
 
-
-const mapStateToProps = (state) => {
+const mapDispatchToProps = (dispatch) => {
     return {
-    }
+        thirdPartyUrlRequest : ()=>{
+            return dispatch(thirdPartyUrlRequest());
+        }
+    };
 };
 
-export default connect(mapStateToProps)(Login);
+export default connect(null, mapDispatchToProps)(withRouter(Login));;
