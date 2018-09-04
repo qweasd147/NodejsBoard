@@ -11,17 +11,18 @@ const initialState = {
 };
 
 
-export default function board(authenState, action){
+export default function authen(authenState, action){
     if(typeof authenState === "undefined") {
         authenState = initialState;
     }
+
     switch(action.type) {
         case types.SET_IS_LOGIN:
             return update(authenState, {
                 isLogin: { $set: action.isLogin }
             });
 
-            case types.LIST_THIRDPARTY_URL_WAIT:
+        case types.LIST_THIRDPARTY_URL_WAIT:
             return update(authenState, {
                 urlRequest : {
                     status : {$set:types.LIST_THIRDPARTY_URL_WAIT}
@@ -30,7 +31,7 @@ export default function board(authenState, action){
         case types.LIST_THIRDPARTY_URL_SUCCESS:
             return update(authenState, {
                 urlRequest: {
-                    dataMap: { $set: action.data.dataMap }
+                    dataMap: { $set: action.data }
                     , status : {$set:types.LIST_THIRDPARTY_URL_SUCCESS}
                 }, 
             });

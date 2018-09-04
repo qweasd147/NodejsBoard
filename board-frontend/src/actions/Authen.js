@@ -17,7 +17,7 @@ import { Materialize } from '../utils/thirdPartyLib';
 
 const LOG_OUT_API = "/api/authen/logout/";
 const USER_INFO = "/api/authen/userInfo";
-const LOGIN_THIRD_PARTY_URL_API = "/api";       //third party 로그인 url 목록 요청
+const LOGIN_THIRD_PARTY_URL_API = "/api/authen/loginURL";       //third party 로그인 url 목록 요청
 
 /**
  * 쿠키 값으로 로그인 상태여부 판별
@@ -31,9 +31,6 @@ export function setIsLogin(boolean){
     
     if(loginProvider)   _isLogin = true;
     else                _isLogin = false;
-
-    //TODO : 현재 로그인 처리를 적용하지 않아서, 임시로 항상 로그인 상태로 처리
-    _isLogin = true;
 
     return {
         type:SET_IS_LOGIN
@@ -107,7 +104,7 @@ export function thirdPartyUrlRequest() {
         
         return requestGET(LOGIN_THIRD_PARTY_URL_API)
         .then((response) => {
-            dispatch(thirdPartySuccess(response.data));
+            dispatch(thirdPartySuccess(response.data.data));
             dispatch(dataLoadingComplete());
         }).catch((error) => {
             dispatch(thirdPartyFail(getErrMsg(error)));
