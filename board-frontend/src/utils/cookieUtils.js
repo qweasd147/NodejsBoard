@@ -7,4 +7,8 @@ coockieUtils.getCookie = (key) => {
     if (parts.length == 2) return parts.pop().split(";").shift();
 }
 
+coockieUtils.deleteCookie = (key) => {
+    document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
 export default coockieUtils;

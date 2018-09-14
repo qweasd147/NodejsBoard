@@ -10,7 +10,7 @@ import {
 import { dataLoading, dataLoadingComplete
     , waitHandler, successHandler, failHandler, getErrMsg } from './Common';
 
-import { requestGET } from '../utils/ajaxUtils';
+import { requestGET, requestPOST } from '../utils/ajaxUtils';
 import cookieUtils from '../utils/cookieUtils';
 //TODO : action에서 다른 작업(toast) 하는게 맞는건가 고민중
 import { Materialize } from '../utils/thirdPartyLib';
@@ -19,13 +19,15 @@ const LOG_OUT_API = "/api/authen/logout/";
 const USER_INFO = "/api/authen/userInfo";
 const LOGIN_THIRD_PARTY_URL_API = "/api/authen/loginURL";       //third party 로그인 url 목록 요청
 
+const LOGIN_COOKIE_KEY = "Authorization";   //토큰을 담을 쿠키이름
+
 /**
  * 쿠키 값으로 로그인 상태여부 판별
  * @param {*} boolean 
  */
 export function setIsLogin(boolean){
 
-    const loginProvider = cookieUtils.getCookie('loginProvider');
+    const loginProvider = cookieUtils.getCookie(LOGIN_COOKIE_KEY);
 
     let _isLogin;
     
@@ -54,6 +56,10 @@ export function logOutRequest() {
         }).catch((error) => {
             dispatch(logOutFail(error.message));
             dispatch(dataLoadingComplete());
+        })
+        .then(() => {
+            //정상 처리 or 에러와 상관없이 쿠키를 삭제한다.
+            cookieUtils.deleteCookie(LOGIN_COOKIE_KEY);
         });
     };
 }
