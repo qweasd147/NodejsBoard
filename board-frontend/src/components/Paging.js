@@ -12,14 +12,16 @@ class Paging extends React.Component {
             , startBlock : 0
             , endBlock : 0
             , totalPage : 0
+            , rowsPerPage : 10
         }
         this.handlePrevPage = this.handlePrevPage.bind(this);
         this.handleNextPage = this.handleNextPage.bind(this);
         this.changePage = this.changePage.bind(this);
+        this.props.setRowsPerPage(this.state.rowsPerPage);
     }
     
     componentWillReceiveProps(nextProps){
-        let Paging = new PagingUtil(nextProps.count, nextProps.page, 10, 10);
+        let Paging = new PagingUtil(nextProps.count, nextProps.page, this.state.rowsPerPage, 10);
 
         this.setState({
             currentPage : Paging.getCurrentPage()
@@ -27,7 +29,6 @@ class Paging extends React.Component {
             , endBlock : Paging.getEndBlock()
             , totalPage : Paging.getTotalPage()
         });
-
     }
 
 

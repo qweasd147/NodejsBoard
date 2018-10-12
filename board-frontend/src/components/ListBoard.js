@@ -11,7 +11,12 @@ class ListBoard extends React.Component {
     constructor(props){
         super(props);
 
+        this.state = {
+            rowsPerPage : 10
+        }
+
         this.handleClick = this.handleClick.bind(this);
+        this.setRowsPerPage = this.setRowsPerPage.bind(this);
     }
 
     handleClick(e, item){
@@ -19,6 +24,12 @@ class ListBoard extends React.Component {
 
         if(item._id)
             this.props.handleSelectBoard(item._id);
+    }
+
+    setRowsPerPage(_rowsPerPage){
+        this.setState({
+            rowsPerPage : _rowsPerPage
+        });
     }
 
     render() {
@@ -30,7 +41,7 @@ class ListBoard extends React.Component {
                 );
             }
             
-            const listCnt = totalCnt;
+            const listCnt = totalCnt - this.state.rowsPerPage * (this.props.page - 1);
 
             return data.map((item, i) => {
                 /*
@@ -86,7 +97,13 @@ class ListBoard extends React.Component {
                         </tbody>
                     </table>
                 </div>
-                <Paging count = {this.props.totCount} handlePage = {this.props.handlePage} page = {this.props.page}/>
+                <Paging
+                    count = {this.props.totCount}
+                    handlePage = {this.props.handlePage}
+                    page = {this.props.page}
+                    setRows = {this.props.page}
+                    setRowsPerPage = {this.setRowsPerPage}
+                />
                 <div className="fixed-action-btn">
                     <a className="btn-floating btn-large red">
                         <i className="large material-icons">add</i>
