@@ -1,6 +1,5 @@
-module.exports.getRemoteAddr = function (req){
+module.exports.getRemoteAddr = request => {
     let ipAddress;
-
 
     /*
     if(!!req.hasOwnProperty('sessionID')){
@@ -21,6 +20,5 @@ module.exports.getRemoteAddr = function (req){
     */
     ipAddress = req.header('x-forwarded-for') || req.connection.remoteAddress;
 
-    console.log(ipAddress);
     return ipAddress;
 }

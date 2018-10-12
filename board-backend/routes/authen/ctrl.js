@@ -1,8 +1,5 @@
-const express = require('express');
-const loginInfo = require('../config/secret');
-const env = require('../config/env');
-
-const router = express.Router();
+const loginInfo = require('../../config/secret.js');
+const env = require('../../config/env');
 
 const passport = require('passport');
 
@@ -12,30 +9,40 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const successRedirect = env.successRedirect;
 
-/*로그인 성공시 사용자 정보를 Session에 저장한다*/
-passport.serializeUser(function (user, done) {
-  done(null, user);
+/**
+ * 로그인 성공시 사용자 정보를 Session에 저장한다
+ */
+passport.serializeUser((user, done)=>{
+  done(null, user)
+  return;
 }); 
  
  
-/*인증 후, 페이지 접근시 마다 사용자 정보를 Session에서 읽어옴.*/
-passport.deserializeUser(function (user, done) {
+/**
+ * 인증 후, 페이지 접근시 마다 사용자 정보를 Session에서 읽어옴.
+ */
+passport.deserializeUser((user, done)=>{
   done(null, user);
+  return;
 }); 
+
  
- 
-/*로그인 유저 판단 로직*/
-const isAuthenticated = function (req, res, next) {
-  if (req.isAuthenticated())
+/**
+ * 로그인 유저 판단 로직
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+const isAuthenticated = (req, res, next)=>{
+  if(req.isAuthenticated())
     return next();
-  res.redirect("/"); 
-}; 
+  res.redirect("/");
+};
 
-function loginByThirdparty(data,done){
-  //사용자 정보를 개인(어플) DB로 관리 할지 안할지
-  //선택 하여 구현
-
+const loginByThirdparty = (data, done)=>{
+  //사용자 정보를 DB에서 저장 시, 여기서 관리
   done(null,data);
+  return;
 }
 
 passport.use(new KakaoStrategy({
@@ -43,7 +50,7 @@ passport.use(new KakaoStrategy({
     callbackURL : loginInfo.passport.kakao.callbackURL,
     passReqToCallback : true
   },
-  function(req, accessToken, refreshToken, profile, done){
+  (req, accessToken, refreshToken, profile, done) => {
     // 사용자의 정보는 profile에 들어있다.
     var _profile = profile._json;
 
@@ -67,9 +74,9 @@ passport.use(new NaverStrategy({
     callbackURL: loginInfo.passport.naver.callbackURL,
     passReqToCallback : true
   },
-  function (req, accessToken, refreshToken, profile, done) {
+  (req, accessToken, refreshToken, profile, done) => {
     let _profile = profile._json;
-
+  
     req.res.cookie('loginProvider', 'naver');
     
     let sessionData = {
@@ -89,7 +96,7 @@ passport.use(new GoogleStrategy({
       callbackURL: loginInfo.passport.google.callbackURL,
       passReqToCallback : true
     },
-    function(req, accessToken, refreshToken, profile, done) {
+    (req, accessToken, refreshToken, profile, done) => {
       let _profile = profile._json;
       
       req.res.cookie('loginProvider', 'google');
@@ -100,44 +107,51 @@ passport.use(new GoogleStrategy({
         'accessToken' : accessToken,
         'provider' : 'google'
       }
-
+    
       loginByThirdparty(sessionData, done);
     }
 ));
 
-//kakao
-router.get('/login/kakao', passport.authenticate('kakao'));
+/**
+ * 카카오 로그인 요청 시
+ */
+exports.handleKaKaoLogin = passport.authenticate('kakao');
 
-router.get('/login/kakao/callback',
-  passport.authenticate('kakao', {
-    successRedirect: successRedirect,
-    failureRedirect: '/login'
-  })
-);
+/**
+ * 카카오 로그인(인증) 완료 후
+ */
+exports.handleAfterKaKaoLogin = passport.authenticate('kakao', {
+  successRedirect: successRedirect,
+  failureRedirect: '/login'
+});
 
-//naver
-router.get('/login/naver', passport.authenticate('naver'));
+/**
+ * 네이버 로그인 요청 시
+ */
+exports.handleNaverLogin = passport.authenticate('naver')
 
-router.get('/login/naver/callback',
-  passport.authenticate('naver', {
-    successRedirect: successRedirect,
-    failureRedirect: '/login'
-  })
-);
+/**
+ * 네이버 로그인(인증) 완료 후
+ */
+exports.handleAfterNaverLogin = passport.authenticate('naver', {
+  successRedirect: successRedirect,
+  failureRedirect: '/login'
+});
 
+/**
+ * 구글 로그인 요청 시
+ */
+exports.handleGoogleLogin = passport.authenticate('google', { scope: ['email profile'] })
 
-//google
-router.get('/login/google', passport.authenticate('google', { scope: ['email profile'] }));
+/**
+ * 구글 로그인(인증) 완료 후
+ */
+exports.handleAfterGoogleLogin = passport.authenticate('google', {
+  successRedirect: successRedirect,
+  failureRedirect: '/login'
+});
 
-router.get('/login/google/callback',
-      passport.authenticate('google', {
-        successRedirect: successRedirect,
-        failureRedirect: '/login'
-      })
-);
-
-router.get('/logout', function (req, resp) {
-
+exports.logout = (req, resp) => {
   req.logout();
   resp.clearCookie('loginProvider');
 
@@ -154,10 +168,9 @@ router.get('/logout', function (req, resp) {
   return resp.json({
       success: true
   });
+}
 
-});
-
-router.get('/userInfo', function (req, resp) {
+exports.checkUserInfoForTest = (req, resp) => {
   console.log(req.session);
   
   if(req.isAuthenticated()){
@@ -169,7 +182,4 @@ router.get('/userInfo', function (req, resp) {
   return resp.json({
       success: true
   });
-
-});
-
-module.exports = router;
+}

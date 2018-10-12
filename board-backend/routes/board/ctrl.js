@@ -1,56 +1,13 @@
-const express = require('express');
-const Board = require('../model/board');
-const { getRemoteAddr } = require('../util/httpUtils');
+const Board = require('../../model/board');
 const mongoose = require('mongoose');
 const multer = require('multer');
 //const Q = require('q');
 const uuid = require('node-uuid');
 
-const router = express.Router();
-
-/*
-var saveFile = function (req, res) {
-    var deferred = Q.defer();
-    var storage = multer.diskStorage({
-        // 서버에 저장할 폴더
-        destination: '/dev/upload'
-        
-        // 서버에 저장할 파일 명
-        , filename: function (req, file, cb) {
-            file.uploadedFile = {
-                name: req.params.filename,
-                ext: file.mimetype.split('/')[1]
-            };
-            cb(null, file.uploadedFile.name + '.' + file.uploadedFile.ext+(new Date().getTime()));
-        }
-    });
-    
-    var upload = multer({ storage: storage }).single('uploadFile');
-    upload(req, res, function (err) {
-        if (err) deferred.reject();
-        else deferred.resolve(req.file.uploadedFile);
-    });
-
-    return deferred.promise;
-};
-*/
-
-const storage = multer.diskStorage({
-    destination: '/dev/upload'
-    , filename: function (req, file, callback) {        
-        let fileName = uuid.v4();
-
-        callback(null, fileName);
-    }
-});
-
-const upload = multer({ storage: storage });
-
 /**
  * Board List
  */
-router.get('/', async (req, resp) => {
-
+exports.getBoardList = async (req, resp) => {
     const {
         keyword
         , searchWord
@@ -81,7 +38,7 @@ router.get('/', async (req, resp) => {
         , count :boardListCount
         , page : page || 1
     });
-});
+}
 
 /**
  * Board 상세
@@ -89,7 +46,7 @@ router.get('/', async (req, resp) => {
  * errCode
  * 2 -> 잘못된 아이디
  */
-router.get('/:id', async (req, resp) => {
+exports.getBoardDetail = async (req, resp) => {
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -112,7 +69,7 @@ router.get('/:id', async (req, resp) => {
     return resp.json({
         selectData : boardOne
     });
-});
+}
 
 /**
  * 글쓰기
@@ -120,7 +77,7 @@ router.get('/:id', async (req, resp) => {
  * errCode 
  * 1 -> 벨리데이션 오류
  */
-router.post('/', upload.array('uploadFile[]'), async (req,resp)=>{
+exports.insertBoardOne = async (req,resp)=>{
     
     //벨리데이션
     if(!(req.body.subject && req.body.contents)){
@@ -151,7 +108,7 @@ router.post('/', upload.array('uploadFile[]'), async (req,resp)=>{
     });
 
     return resp.json({ success: true });
-});
+};
 
 /**
  * 글수정
@@ -162,7 +119,7 @@ router.post('/', upload.array('uploadFile[]'), async (req,resp)=>{
  * 3 -> 해당 글번호 존재안함
  * 4 -> 수정 권한 없음
  */
-router.put('/:id', upload.array('uploadFile[]'), async (req,resp)=>{
+exports.updateBoardOne = async (req,resp)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -202,7 +159,7 @@ router.put('/:id', upload.array('uploadFile[]'), async (req,resp)=>{
     return resp.json({
         success: true
     });
-});
+}
 
 /**
  * Board 삭제
@@ -210,7 +167,7 @@ router.put('/:id', upload.array('uploadFile[]'), async (req,resp)=>{
  * errCode
  * 2 -> 잘못된 아이디
  */
-router.delete('/:id', async (req, resp) => {
+exports.deleteBoardOne = async (req,resp)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return resp.status(400).json({
             error: "INVALID ID",
@@ -223,15 +180,16 @@ router.delete('/:id', async (req, resp) => {
     return resp.json({
         success: true
     });
-});
+}
 
 /**
  * download 요청을 한다.
  */
-router.get('/download/:boardId/:fileId', async (req,resp)=>{
-    
-    const boardId = req.params.boardId;
-    const fileId = req.params.fileId;
+exports.downloadFile = async (req,resp)=>{
+    const {
+        boardId
+        , fileId
+    } = req.params;
 
     if(!(mongoose.Types.ObjectId.isValid(boardId) && mongoose.Types.ObjectId.isValid(fileId))){
         return resp.status(404).json({
@@ -254,7 +212,7 @@ router.get('/download/:boardId/:fileId', async (req,resp)=>{
     const originName = fileData.file[0].originName;
 
     resp.download(fileFullPath, originName);
-});
+}
 
 /**
  * multer에서 upload에서 제공받는 형태와
@@ -262,7 +220,7 @@ router.get('/download/:boardId/:fileId', async (req,resp)=>{
  * @param {*} files 
  */
 function getFileObjArr(files){
-    let rtnArr = new Array();
+    let rtnArr = [];
 
     if(!files)
         return rtnArr;
@@ -292,5 +250,3 @@ function getFileObjArr(files){
 
     return rtnArr;
 }
-
-module.exports = router;
